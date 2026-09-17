@@ -7,3 +7,17 @@ body {
 .centre {
     text-align: center;
 }
+
+.footer {
+    text-align: center;
+    margin-top: 500px;
+}
+
+.buttons {
+    background-color: #228899;
+    color: #eeeeee;
+    border-color: #eeeeee;
+    border-radius: 10;
+    font-size: 20pt;
+    font-family: sans-serif;
+}
