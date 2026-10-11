@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Projet Databases IF3E</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
 <h1>Welcome back ! It's been a while !</h1>
