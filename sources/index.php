@@ -2,6 +2,15 @@
 <head>
 <title>Projet Databases IF3E</title>
 <link rel="stylesheet" href="stylesheets/style.css">
+<style type="text/css">
+body {
+background-image: url("pictures/home.webp");
+background-size: 1920px;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-position: center;
+}
+</style>
 </head>
 <body>
     <div class="centre">
