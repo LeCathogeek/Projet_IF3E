@@ -8,6 +8,5 @@ CREATE TABLE users (
   birthdate DATE,
   account_creation_date DATE,
   account_status INT,
-  profile_picture TEXT,
-  is_admin INT
+  profile_picture TEXT
 );
