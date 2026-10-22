@@ -20,7 +20,7 @@ try {
     $name = trim($_POST['name'] ?? '');
     $firstname = trim($_POST['firstname'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $password = password_hash(trim($_POST['password'] ?? ''), PASSWORD_DEFAULT);
     $phonenumber = trim($_POST['phonenumber'] ?? '');
     $birthdate = trim($_POST['birthdate'] ?? '');
     $profilepicture = trim($_POST['avatar'] ?? '');
@@ -45,19 +45,17 @@ try {
     if ($profilepicture !== '' && !filter_var($profilepicture, FILTER_VALIDATE_URL)) {
          echo "<script> alert('Votre URL n'est pas valide.'); </script>"; 
     }
-    // Optionnel: validation date (YYYY-MM-DD attendue par <input type="date">)
+
     if ($birthdate !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate)) {
          echo "<script> alert('Date de naissance invalide.'); </script>"; 
     }
 
-    // Vérifier si l'email existe déjà (prévenir violation UNIQUE et donner message propre)
     $check = $pdo->prepare('SELECT COUNT(1) FROM users WHERE email = :email');
     $check->execute([':email' => $email]);
     if ($check->fetchColumn() > 0) {
         throw new Exception('Un compte avec cette adresse e-mail existe déjà.');
     }
 
-    // INSÉRER SANS FOURNIR id : SQLite s'en chargera (AUTOINCREMENT si la table est définie ainsi)
     $sql = "INSERT INTO users
       (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture)
       VALUES

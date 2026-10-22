@@ -33,6 +33,6 @@
     </form>
   </div>
 
-  <a href="index.html"><button>Home</button></a>
+  <a href="index.php"><button>Home</button></a>
 </body>
 </html>
