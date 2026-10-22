@@ -1,19 +1,13 @@
 <?php
 session_start();
-?>
-<html lang="en">
-<head>
-<title>TD7</title>
-<link rel="stylesheet" href="../styles/styles.css" />
-</head>
-<body>
-<?php
+
 try {
     $conn = new PDO('sqlite:' . __DIR__ . '/databases/main_database.sq3');
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connexion impossible : " . $e->getMessage());
 }
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: login.php");
     exit;
@@ -32,11 +26,13 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
     if ($user && password_verify($passwordSubmitted, $user['password'])) {
         $_SESSION['email'] = $user['email'];
         header("Location: dashboard.php");
         exit;
     }
+
     header("Location: login.php");
     exit;
 
@@ -44,5 +40,11 @@ try {
     die("Erreur SQL : " . $e->getMessage());
 }
 ?>
+<html lang="en">
+<head>
+<title>TD7</title>
+<link rel="stylesheet" href="../styles/styles.css" />
+</head>
+<body>
 </body>
 </html>
