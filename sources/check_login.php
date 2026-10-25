@@ -32,7 +32,7 @@ try {
         header("Location: dashboard.php");
         exit;
     }
-
+    $_SESSION['flash_error'] = "Mot de passe incorrect.";
     header("Location: login.php");
     exit;
 

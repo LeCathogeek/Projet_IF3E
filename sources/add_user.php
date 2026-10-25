@@ -35,7 +35,7 @@ try {
         echo "<script> alert('Mauvais email'); </script>"; 
     }
     if (strlen($password) < 8) {
-         echo "<script> alert('Mauvais email'); </script>"; 
+         echo "<script> alert('Le mot de passe doit faire au moins 8 caractères.'); </script>"; 
     }
     // Optionnel: vérification format téléphone simple
     if ($phonenumber !== '' && !preg_match('/^[0-9 +()-]{6,20}$/', $phonenumber)) {
