@@ -1,82 +1,76 @@
-<html lang="en">
-<head>
-<title>Add students</title>
-<link rel="stylesheet"
-href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-</head>
-<body>
 <?php
+session_start();
+require __DIR__ . '/db.php';
+
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Location: index.php');
         exit;
     }
 
-    // Connexion PDO SQLite
-    $pdo = new PDO('sqlite:' . __DIR__ . '/databases/main_database.sq3');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = getDb();
 
-    // Récupération et nettoyage des champs
     $name = trim($_POST['name'] ?? '');
     $firstname = trim($_POST['firstname'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $password = password_hash(trim($_POST['password'] ?? ''), PASSWORD_DEFAULT);
+    $password = trim($_POST['password'] ?? '');
     $phonenumber = trim($_POST['phonenumber'] ?? '');
     $birthdate = trim($_POST['birthdate'] ?? '');
     $profilepicture = trim($_POST['avatar'] ?? '');
-    $accountcreationdate = date('Y-m-d');
-    $accountstatus = 0;
 
-    // Validations côté serveur
     if ($name === '' || $firstname === '') {
         throw new Exception('Le nom et le prénom sont requis.');
     }
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<script> alert('Mauvais email'); </script>"; 
+
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Adresse e-mail invalide.');
     }
+
     if (strlen($password) < 8) {
-         echo "<script> alert('Le mot de passe doit faire au moins 8 caractères.'); </script>"; 
+        throw new Exception('Le mot de passe doit faire au moins 8 caractères.');
     }
-    // Optionnel: vérification format téléphone simple
-    if ($phonenumber !== '' && !preg_match('/^[0-9 +()-]{6,20}$/', $phonenumber)) {
-         echo "<script> alert('Mauvais email'); </script>"; 
+
+    if ($phonenumber !== '' && !preg_match('/^[0-9 +()\-]{6,20}$/', $phonenumber)) {
+        throw new Exception('Le numéro de téléphone est invalide.');
     }
-    // Optionnel: url d'avatar valide si fournie
+
     if ($profilepicture !== '' && !filter_var($profilepicture, FILTER_VALIDATE_URL)) {
-         echo "<script> alert('Votre URL n'est pas valide.'); </script>"; 
+        throw new Exception('L\'URL de l\'avatar est invalide.');
     }
 
     if ($birthdate !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate)) {
-         echo "<script> alert('Date de naissance invalide.'); </script>"; 
+        throw new Exception('Date de naissance invalide.');
     }
 
     $check = $pdo->prepare('SELECT COUNT(1) FROM users WHERE email = :email');
     $check->execute([':email' => $email]);
-    if ($check->fetchColumn() > 0) {
+    if ((int) $check->fetchColumn() > 0) {
         throw new Exception('Un compte avec cette adresse e-mail existe déjà.');
     }
 
-    $sql = "INSERT INTO users
-      (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture)
-      VALUES
-      (:name, :firstname, :email, :password, :phonenumber, :birthdate, :accountcreationdate, :accountstatus, :profilepicture)";
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+    $sql = 'INSERT INTO users
+        (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture)
+        VALUES
+        (:name, :firstname, :email, :password, :phonenumber, :birthdate, :accountcreationdate, :accountstatus, :profilepicture)';
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         ':name' => $name,
         ':firstname' => $firstname,
         ':email' => $email,
-        ':password' => $password,
+        ':password' => $passwordHash,
         ':phonenumber' => $phonenumber,
         ':birthdate' => $birthdate,
-        ':accountcreationdate' => $accountcreationdate,
-        ':accountstatus' => $accountstatus,
-        ':profilepicture' => $profilepicture
+        ':accountcreationdate' => date('Y-m-d'),
+        ':accountstatus' => 0,
+        ':profilepicture' => $profilepicture,
     ]);
 
-    header('Location: index.php');
+    header('Location: login.php');
     exit;
 } catch (PDOException $e) {
-    // Gestion spécifique pour contrainte d'unicité si la vérification préalable a échoué
     http_response_code(500);
     echo 'Erreur base de données : ' . htmlspecialchars($e->getMessage());
     exit;
@@ -85,6 +79,3 @@ try {
     echo 'Erreur : ' . htmlspecialchars($e->getMessage());
     exit;
 }
-?>
-</body>
-</html>

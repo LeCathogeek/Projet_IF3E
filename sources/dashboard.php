@@ -1,5 +1,34 @@
 <?php
 session_start();
+require __DIR__ . '/db.php';
+
+$db = getDb();
+
+if (!isset($_SESSION['id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$userId = (int) $_SESSION['id'];
+
+$stmt = $db->prepare('SELECT firstname, account_status FROM users WHERE id = :id LIMIT 1');
+$stmt->execute([':id' => $userId]);
+$user = $stmt->fetch();
+
+if (!$user) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
+
+$trips = $db->query(
+    "SELECT t.*, u.firstname AS driver_name
+     FROM trips t
+     JOIN users u ON u.id = t.driver_id
+     WHERE t.status = 'Open'
+     ORDER BY t.departure_date, t.departure_time
+     LIMIT 10"
+)->fetchAll();
 ?>
 <html>
 <head>
@@ -9,41 +38,47 @@ session_start();
 <body>
 <h1>Welcome back !</h1>
 <h2>Nice to see you !</h2>
-<?php
-if (isset($_SESSION['id'])) {
-    try {
-    $conn = new PDO('sqlite:' . __DIR__ . '/databases/main_database.sq3');
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connexion impossible : " . $e->getMessage());
-}
-try {
-    $sql = "SELECT firstname, account_status FROM users WHERE id = :id LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([':id' => $_SESSION['id']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Erreur SQL : " . $e->getMessage());
-}
-    $firstname = $user['firstname'];
-    echo "<p>Hello $firstname !</p>";
-    echo '<br />';
-    echo '<div id="navigation">';
-    echo '<ul id="navigation">';
-    echo '<li><a href="#" title="My cars">My cars</a></li>';
-    echo '<li><a href="#" title="My trips">My trips</a></li>';
-    echo '<li><a href="#" title="Search a trip">Search a trip</a></li>';
-    if ($user['account_status'] == 1) {
-    echo '<li><a href="#" title="admin">Admin</a></li>';
-    }
-    echo '</ul>';
-    echo '<a href="signout.php"><button type="button">Sign out</button></a>';
-    echo '</div>';
-}
-else {
-    echo "Error ! Please login.";
-    echo '<a href="login.php">Back to login</a>';
-}
-?>
+<p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
+
+<div id="navigation">
+    <ul>
+        <li><a href="dashboard.php" title="Dashboard">Dashboard</a></li>
+        <li><a href="search_trips.php" title="Search a trip">Search a trip</a></li>
+        <li><a href="#" title="My cars">My cars</a></li>
+        <li><a href="#" title="My trips">My trips</a></li>
+        <?php if ((int) $user['account_status'] === 1): ?>
+            <li><a href="#" title="admin">Admin</a></li>
+        <?php endif; ?>
+    </ul>
+    <a href="signout.php"><button type="button">Sign out</button></a>
+</div>
+
+<h3>Available trips</h3>
+<?php if (empty($trips)): ?>
+    <p>No trip is currently available.</p>
+<?php else: ?>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Driver</th>
+            <th>Departure</th>
+            <th>Destination</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Seats</th>
+            <th>Price</th>
+        </tr>
+        <?php foreach ($trips as $trip): ?>
+            <tr>
+                <td><?= htmlspecialchars($trip['driver_name']) ?></td>
+                <td><?= htmlspecialchars($trip['departure_city']) ?></td>
+                <td><?= htmlspecialchars($trip['destination_city']) ?></td>
+                <td><?= htmlspecialchars($trip['departure_date']) ?></td>
+                <td><?= htmlspecialchars($trip['departure_time']) ?></td>
+                <td><?= (int) $trip['seats_available'] ?></td>
+                <td><?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
 </body>
 </html>
