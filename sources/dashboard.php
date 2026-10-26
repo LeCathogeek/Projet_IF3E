@@ -21,6 +21,15 @@ if (!$user) {
     exit;
 }
 
+$trips = $db->query(
+    "SELECT t.*, u.firstname AS driver_name
+     FROM trips t
+     JOIN users u ON u.id = t.driver_id
+     WHERE t.status = 'Open'
+     ORDER BY t.departure_date, t.departure_time
+     LIMIT 10"
+)->fetchAll();
+
 $stmt = $db->prepare('
     SELECT b.id, b.status, b.seats_booked, b.total_price,
            t.departure_city, t.destination_city, t.departure_date, t.departure_time
@@ -31,15 +40,6 @@ $stmt = $db->prepare('
 ');
 $stmt->execute([':user_id' => $userId]);
 $bookings = $stmt->fetchAll();
-
-$trips = $db->query(
-    "SELECT t.*, u.firstname AS driver_name
-     FROM trips t
-     JOIN users u ON u.id = t.driver_id
-     WHERE t.status = 'Open'
-     ORDER BY t.departure_date, t.departure_time
-     LIMIT 10"
-)->fetchAll();
 ?>
 <html>
 <head>
@@ -55,8 +55,9 @@ $trips = $db->query(
     <ul>
         <li><a href="dashboard.php" title="Dashboard">Dashboard</a></li>
         <li><a href="search_trips.php" title="Search a trip">Search a trip</a></li>
-        <li><a href="#" title="My cars">My cars</a></li>
-        <li><a href="#" title="My trips">My trips</a></li>
+        <li><a href="add_vehicle.php" title="My cars">Add a vehicle</a></li>
+        <li><a href="create_trip.php" title="Publish a trip">Publish a trip</a></li>
+        <li><a href="my_trips.php" title="My trips">My trips</a></li>
         <?php if ((int) $user['account_status'] === 1): ?>
             <li><a href="#" title="admin">Admin</a></li>
         <?php endif; ?>
