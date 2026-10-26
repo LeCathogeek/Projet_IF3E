@@ -2,8 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['id'])) {
-    echo 'Error ! Please login.';
-    echo '<br><a href="login.php">Back to login</a>';
+    header('Location: login.php');
     exit;
 }
 
@@ -21,64 +20,131 @@ if (!$user) {
     exit;
 }
 
-$trips = $db->query(
-    "SELECT t.*, u.firstname AS driver_name
-     FROM trips t
-     JOIN users u ON u.id = t.driver_id
-     WHERE t.status = 'Open'
-     ORDER BY t.departure_date, t.departure_time
-     LIMIT 10"
-)->fetchAll();
+$successMessage = $_SESSION['flash_success'] ?? '';
+unset($_SESSION['flash_success']);
+
+$departure = trim((string) ($_GET['departure'] ?? ''));
+$destination = trim((string) ($_GET['destination'] ?? ''));
+$date = trim((string) ($_GET['date'] ?? ''));
+$seats = max(1, (int) ($_GET['seats'] ?? 1));
+$maxPrice = trim((string) ($_GET['max_price'] ?? ''));
+
+$sql = "
+    SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date,
+           t.departure_time, t.seats_available, t.price_per_seat,
+           u.firstname AS driver_name,
+           v.brand, v.model
+    FROM trips t
+    JOIN users u ON u.id = t.driver_id
+    LEFT JOIN vehicles v ON v.id = t.vehicle_id
+    WHERE t.status = 'Open'";
+
+$params = [];
+
+if ($departure !== '') {
+    $sql .= ' AND LOWER(t.departure_city) = LOWER(:departure)';
+    $params[':departure'] = $departure;
+}
+
+if ($destination !== '') {
+    $sql .= ' AND LOWER(t.destination_city) = LOWER(:destination)';
+    $params[':destination'] = $destination;
+}
+
+if ($date !== '') {
+    $sql .= ' AND t.departure_date = :date';
+    $params[':date'] = $date;
+}
+
+if ($seats > 0) {
+    $sql .= ' AND t.seats_available >= :seats';
+    $params[':seats'] = $seats;
+}
+
+if ($maxPrice !== '') {
+    $sql .= ' AND t.price_per_seat <= :max_price';
+    $params[':max_price'] = (float) str_replace(',', '.', $maxPrice);
+}
+
+$sql .= ' ORDER BY t.departure_date ASC, t.departure_time ASC';
+
+$stmt = $db->prepare($sql);
+$stmt->execute($params);
+$trips = $stmt->fetchAll();
 ?>
-<html>
+<!doctype html>
+<html lang="fr">
 <head>
-<title>Projet Databases IF3E</title>
-<link rel="stylesheet" href="stylesheets/style.css">
+    <meta charset="UTF-8">
+    <title>Recherche de trajets</title>
+    <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-<h1>Welcome back !</h1>
-<h2>Nice to see you !</h2>
-<p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
+    <h1>Rechercher un trajet</h1>
+    <p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
 
-<div id="navigation">
-    <ul>
-        <li><a href="dashboard.php" title="Dashboard">Dashboard</a></li>
-        <li><a href="search_trips.php" title="Search a trip">Search a trip</a></li>
-        <li><a href="#" title="My cars">My cars</a></li>
-        <li><a href="#" title="My trips">My trips</a></li>
-        <?php if ((int) $user['account_status'] === 1): ?>
-            <li><a href="#" title="admin">Admin</a></li>
-        <?php endif; ?>
-    </ul>
-    <a href="signout.php"><button type="button">Sign out</button></a>
-</div>
+    <div id="navigation">
+        <ul>
+            <li><a href="dashboard.php" title="Dashboard">Dashboard</a></li>
+            <li><a href="search_trips.php" title="Search a trip">Search a trip</a></li>
+            <li><a href="#" title="My cars">My cars</a></li>
+            <li><a href="#" title="My trips">My trips</a></li>
+            <?php if ((int) $user['account_status'] === 1): ?>
+                <li><a href="#" title="admin">Admin</a></li>
+            <?php endif; ?>
+        </ul>
+        <a href="signout.php"><button type="button">Sign out</button></a>
+    </div>
 
-<h3>Available trips</h3>
-<?php if (empty($trips)): ?>
-    <p>No trip is currently available.</p>
-<?php else: ?>
-    <table border="1" cellpadding="8">
-        <tr>
-            <th>Driver</th>
-            <th>Departure</th>
-            <th>Destination</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Seats</th>
-            <th>Price</th>
-        </tr>
+    <?php if ($successMessage !== ''): ?>
+        <script>
+            alert("<?= htmlspecialchars(addslashes($successMessage), ENT_QUOTES, 'UTF-8') ?>");
+        </script>
+    <?php endif; ?>
+
+    <form method="get" action="search_trips.php">
+        <label for="departure">Départ :</label><br>
+        <input type="text" id="departure" name="departure" value="<?= htmlspecialchars($departure) ?>"><br><br>
+
+        <label for="destination">Destination :</label><br>
+        <input type="text" id="destination" name="destination" value="<?= htmlspecialchars($destination) ?>"><br><br>
+
+        <label for="date">Date :</label><br>
+        <input type="date" id="date" name="date" value="<?= htmlspecialchars($date) ?>"><br><br>
+
+        <label for="seats">Places minimales :</label><br>
+        <input type="number" id="seats" name="seats" min="1" value="<?= (int) $seats ?>"><br><br>
+
+        <label for="max_price">Prix maximum (€) :</label><br>
+        <input type="number" id="max_price" name="max_price" min="0" step="0.01" value="<?= htmlspecialchars($maxPrice) ?>"><br><br>
+
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <hr>
+
+    <?php if (empty($trips)): ?>
+        <p>Aucun trajet disponible pour ces critères.</p>
+    <?php else: ?>
         <?php foreach ($trips as $trip): ?>
-            <tr>
-                <td><?= htmlspecialchars($trip['driver_name']) ?></td>
-                <td><?= htmlspecialchars($trip['departure_city']) ?></td>
-                <td><?= htmlspecialchars($trip['destination_city']) ?></td>
-                <td><?= htmlspecialchars($trip['departure_date']) ?></td>
-                <td><?= htmlspecialchars($trip['departure_time']) ?></td>
-                <td><?= (int) $trip['seats_available'] ?></td>
-                <td><?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</td>
-            </tr>
+            <div style="border:1px solid #ccc; padding:12px; margin:12px 0; max-width:900px;">
+                <p><strong>Conducteur :</strong> <?= htmlspecialchars($trip['driver_name']) ?></p>
+                <p><strong>Voiture :</strong> <?= htmlspecialchars(($trip['brand'] ?? '')) ?> <?= htmlspecialchars(($trip['model'] ?? '')) ?></p>
+                <p><strong>Départ :</strong> <?= htmlspecialchars($trip['departure_city']) ?></p>
+                <p><strong>Destination :</strong> <?= htmlspecialchars($trip['destination_city']) ?></p>
+                <p><strong>Date :</strong> <?= htmlspecialchars($trip['departure_date']) ?></p>
+                <p><strong>Heure :</strong> <?= htmlspecialchars($trip['departure_time']) ?></p>
+                <p><strong>Places disponibles :</strong> <?= (int) $trip['seats_available'] ?></p>
+                <p><strong>Prix :</strong> <?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</p>
+
+                <form method="post" action="reserve_trip.php">
+                    <input type="hidden" name="trip_id" value="<?= (int) $trip['id'] ?>">
+                    <label for="seats_<?= (int) $trip['id'] ?>">Nombre de places :</label>
+                    <input type="number" id="seats_<?= (int) $trip['id'] ?>" name="seats" min="1" max="<?= (int) $trip['seats_available'] ?>" value="1">
+                    <button type="submit">Réserver</button>
+                </form>
+            </div>
         <?php endforeach; ?>
-    </table>
-<?php endif; ?>
+    <?php endif; ?>
 </body>
 </html>
