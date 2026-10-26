@@ -14,7 +14,7 @@ try {
     $passwordSubmitted = $_POST['password'] ?? '';
 
     if ($email === '' || $passwordSubmitted === '') {
-        $_SESSION['flash_error'] = 'Veuillez remplir votre email et votre mot de passe.';
+        $_SESSION['flash_error'] = 'Please fill your email adress and your password.';
         header('Location: login.php');
         exit;
     }
@@ -30,7 +30,7 @@ try {
         exit;
     }
 
-    $_SESSION['flash_error'] = 'Mot de passe incorrect.';
+    $_SESSION['flash_error'] = 'Wrong password.';
     header('Location: login.php');
     exit;
 } catch (PDOException $e) {

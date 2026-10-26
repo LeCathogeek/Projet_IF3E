@@ -7,6 +7,7 @@ if (!isset($_SESSION['id'])) {
 }
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];
@@ -45,36 +46,26 @@ $trips = $stmt->fetchAll();
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-    <h1>Mes trajets</h1>
+    <h1>My trips</h1>
 
-    <div id="navigation">
-        <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="search_trips.php">Rechercher un trajet</a></li>
-            <li><a href="add_vehicle.php">Ajouter une voiture</a></li>
-            <li><a href="create_trip.php">Publier un trajet</a></li>
-            <li><a href="my_trips.php">Mes trajets</a></li>
-        </ul>
-        <a href="signout.php"><button type="button">Déconnexion</button></a>
-    </div>
-
-    <p>Bonjour <?= htmlspecialchars($user['firstname']) ?>.</p>
-
+    <?php
+echoMenu();
+?>
     <?php if (empty($trips)): ?>
-        <p>Vous n'avez publié aucun trajet pour le moment.</p>
-        <p><a href="create_trip.php">Publier un trajet</a></p>
+        <p>You did not publish any trip yet.</p>
+        <p><a href="create_trip.php">Publish a trip</a></p>
     <?php else: ?>
         <table border="1" cellpadding="8">
             <tr>
-                <th>Départ</th>
+                <th>Start</th>
                 <th>Destination</th>
                 <th>Date</th>
-                <th>Heure</th>
-                <th>Voiture</th>
-                <th>Places restantes</th>
-                <th>Prix</th>
-                <th>Statut</th>
-                <th>Réservations</th>
+                <th>Hour</th>
+                <th>Car</th>
+                <th>Remaining seats</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Reservations</th>
             </tr>
             <?php foreach ($trips as $trip): ?>
                 <tr>

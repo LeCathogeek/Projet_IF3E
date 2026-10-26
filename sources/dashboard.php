@@ -7,6 +7,7 @@ if (!isset($_SESSION['id'])) {
 }
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];
@@ -47,51 +48,12 @@ $bookings = $stmt->fetchAll();
 <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-<h1>Welcome back !</h1>
+<h1>Welcome back <?= htmlspecialchars($user['firstname']) ?> !</h1>
 <h2>Nice to see you !</h2>
-<p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
 
-<div id="navigation">
-    <ul>
-        <li><a href="dashboard.php" title="Dashboard">Dashboard</a></li>
-        <li><a href="search_trips.php" title="Search a trip">Search a trip</a></li>
-        <li><a href="add_vehicle.php" title="My cars">Add a vehicle</a></li>
-        <li><a href="create_trip.php" title="Publish a trip">Publish a trip</a></li>
-        <li><a href="my_trips.php" title="My trips">My trips</a></li>
-        <?php if ((int) $user['account_status'] === 1): ?>
-            <li><a href="#" title="admin">Admin</a></li>
-        <?php endif; ?>
-    </ul>
-    <a href="signout.php"><button type="button">Sign out</button></a>
-</div>
-
-<h3>Available trips</h3>
-<?php if (empty($trips)): ?>
-    <p>No trip is currently available.</p>
-<?php else: ?>
-    <table border="1" cellpadding="8">
-        <tr>
-            <th>Driver</th>
-            <th>Departure</th>
-            <th>Destination</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Seats</th>
-            <th>Price</th>
-        </tr>
-        <?php foreach ($trips as $trip): ?>
-            <tr>
-                <td><?= htmlspecialchars($trip['driver_name']) ?></td>
-                <td><?= htmlspecialchars($trip['departure_city']) ?></td>
-                <td><?= htmlspecialchars($trip['destination_city']) ?></td>
-                <td><?= htmlspecialchars($trip['departure_date']) ?></td>
-                <td><?= htmlspecialchars($trip['departure_time']) ?></td>
-                <td><?= (int) $trip['seats_available'] ?></td>
-                <td><?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
-<?php endif; ?>
+<?php
+echoMenu();
+?>
 
 <h3>My reservations</h3>
 <?php if (!empty($bookings)): ?>
@@ -120,5 +82,8 @@ $bookings = $stmt->fetchAll();
 <?php else: ?>
     <p>You have no reservation yet.</p>
 <?php endif; ?>
+<?php
+echo '<a href="signout.php"><button type="button">Log out</button></a>';
+?>
 </body>
 </html>

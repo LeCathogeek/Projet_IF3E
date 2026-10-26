@@ -6,6 +6,7 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
+require __DIR__ . '/basic_functions.php';
 require __DIR__ . '/db.php';
 $db = getDb();
 
@@ -83,18 +84,9 @@ $trips = $stmt->fetchAll();
     <h1>Rechercher un trajet</h1>
     <p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
 
-    <div id="navigation">
-        <ul>
-            <li><a href="dashboard.php" title="Dashboard">Dashboard</a></li>
-            <li><a href="search_trips.php" title="Search a trip">Search a trip</a></li>
-            <li><a href="#" title="My cars">My cars</a></li>
-            <li><a href="#" title="My trips">My trips</a></li>
-            <?php if ((int) $user['account_status'] === 1): ?>
-                <li><a href="#" title="admin">Admin</a></li>
-            <?php endif; ?>
-        </ul>
-        <a href="signout.php"><button type="button">Sign out</button></a>
-    </div>
+    <?php
+echoMenu();
+?>
 
     <?php if ($successMessage !== ''): ?>
         <script>

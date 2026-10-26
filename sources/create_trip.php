@@ -7,6 +7,7 @@ if (!isset($_SESSION['id'])) {
 }
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pricePerSeat = (float) ($_POST['price_per_seat'] ?? 0);
 
     if ($vehicleId <= 0 || $departureCity === '' || $destinationCity === '' || $departureDate === '' || $departureTime === '' || $seatsAvailable <= 0 || $pricePerSeat < 0) {
-        $_SESSION['flash_error'] = 'Merci de remplir tous les champs correctement.';
+        $_SESSION['flash_error'] = 'Please fill all the fields as required.';
         header('Location: create_trip.php');
         exit;
     }
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     if (!$checkVehicle->fetch()) {
-        $_SESSION['flash_error'] = 'Cette voiture ne vous appartient pas.';
+        $_SESSION['flash_error'] = "This car doesn't belong to you.";
         header('Location: create_trip.php');
         exit;
     }
@@ -64,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':price_per_seat' => $pricePerSeat,
     ]);
 
-    $_SESSION['flash_success'] = 'Trajet publié avec succès.';
+    $_SESSION['flash_success'] = 'This trip has been published !';
     header('Location: my_trips.php');
     exit;
 }
@@ -83,16 +84,9 @@ $vehicleList = $vehicles->fetchAll();
 <body>
     <h1>Publier un trajet</h1>
 
-    <div id="navigation">
-        <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="search_trips.php">Rechercher un trajet</a></li>
-            <li><a href="add_vehicle.php">Ajouter une voiture</a></li>
-            <li><a href="create_trip.php">Publier un trajet</a></li>
-            <li><a href="my_trips.php">Mes trajets</a></li>
-        </ul>
-        <a href="signout.php"><button type="button">Déconnexion</button></a>
-    </div>
+    <?php
+echoMenu();
+?>
 
     <?php if (empty($vehicleList)): ?>
         <p>Vous n'avez pas encore de voiture enregistrée.</p>
