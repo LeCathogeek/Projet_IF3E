@@ -1,0 +1,135 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+require __DIR__ . '/db.php';
+$db = getDb();
+
+$userId = (int) $_SESSION['id'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $vehicleId = (int) ($_POST['vehicle_id'] ?? 0);
+    $departureCity = trim((string) ($_POST['departure_city'] ?? ''));
+    $destinationCity = trim((string) ($_POST['destination_city'] ?? ''));
+    $departureDate = trim((string) ($_POST['departure_date'] ?? ''));
+    $departureTime = trim((string) ($_POST['departure_time'] ?? ''));
+    $seatsAvailable = (int) ($_POST['seats_available'] ?? 0);
+    $pricePerSeat = (float) ($_POST['price_per_seat'] ?? 0);
+
+    if ($vehicleId <= 0 || $departureCity === '' || $destinationCity === '' || $departureDate === '' || $departureTime === '' || $seatsAvailable <= 0 || $pricePerSeat < 0) {
+        $_SESSION['flash_error'] = 'Merci de remplir tous les champs correctement.';
+        header('Location: create_trip.php');
+        exit;
+    }
+
+    $checkVehicle = $db->prepare('
+        SELECT id
+        FROM vehicles
+        WHERE id = :id AND owner_id = :owner_id
+        LIMIT 1
+    ');
+    $checkVehicle->execute([
+        ':id' => $vehicleId,
+        ':owner_id' => $userId,
+    ]);
+
+    if (!$checkVehicle->fetch()) {
+        $_SESSION['flash_error'] = 'Cette voiture ne vous appartient pas.';
+        header('Location: create_trip.php');
+        exit;
+    }
+
+    $stmt = $db->prepare('
+        INSERT INTO trips (
+            driver_id, vehicle_id, departure_city, destination_city,
+            departure_date, departure_time, seats_available, price_per_seat, status
+        ) VALUES (
+            :driver_id, :vehicle_id, :departure_city, :destination_city,
+            :departure_date, :departure_time, :seats_available, :price_per_seat, "Open"
+        )
+    ');
+
+    $stmt->execute([
+        ':driver_id' => $userId,
+        ':vehicle_id' => $vehicleId,
+        ':departure_city' => $departureCity,
+        ':destination_city' => $destinationCity,
+        ':departure_date' => $departureDate,
+        ':departure_time' => $departureTime,
+        ':seats_available' => $seatsAvailable,
+        ':price_per_seat' => $pricePerSeat,
+    ]);
+
+    $_SESSION['flash_success'] = 'Trajet publié avec succès.';
+    header('Location: my_trips.php');
+    exit;
+}
+
+$vehicles = $db->prepare('SELECT id, brand, model, seat_count FROM vehicles WHERE owner_id = :owner_id ORDER BY brand, model');
+$vehicles->execute([':owner_id' => $userId]);
+$vehicleList = $vehicles->fetchAll();
+?>
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Publier un trajet</title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body>
+    <h1>Publier un trajet</h1>
+
+    <div id="navigation">
+        <ul>
+            <li><a href="dashboard.php">Dashboard</a></li>
+            <li><a href="search_trips.php">Rechercher un trajet</a></li>
+            <li><a href="add_vehicle.php">Ajouter une voiture</a></li>
+            <li><a href="create_trip.php">Publier un trajet</a></li>
+            <li><a href="my_trips.php">Mes trajets</a></li>
+        </ul>
+        <a href="signout.php"><button type="button">Déconnexion</button></a>
+    </div>
+
+    <?php if (empty($vehicleList)): ?>
+        <p>Vous n'avez pas encore de voiture enregistrée.</p>
+        <p><a href="add_vehicle.php">Ajouter une voiture</a></p>
+    <?php else: ?>
+        <form method="post">
+            <label>Choisir une voiture</label><br>
+            <select name="vehicle_id" required>
+                <option value="">-- Sélectionner --</option>
+                <?php foreach ($vehicleList as $vehicle): ?>
+                    <option value="<?= (int) $vehicle['id'] ?>">
+                        <?= htmlspecialchars($vehicle['brand']) ?> <?= htmlspecialchars($vehicle['model']) ?>
+                        (<?= (int) $vehicle['seat_count'] ?> places)
+                    </option>
+                <?php endforeach; ?>
+            </select><br><br>
+
+            <label>Ville de départ</label><br>
+            <input type="text" name="departure_city" required><br><br>
+
+            <label>Ville de destination</label><br>
+            <input type="text" name="destination_city" required><br><br>
+
+            <label>Date de départ</label><br>
+            <input type="date" name="departure_date" required><br><br>
+
+            <label>Heure de départ</label><br>
+            <input type="time" name="departure_time" required><br><br>
+
+            <label>Places disponibles</label><br>
+            <input type="number" name="seats_available" min="1" required><br><br>
+
+            <label>Prix par place (€)</label><br>
+            <input type="number" name="price_per_seat" min="0" step="0.01" required><br><br>
+
+            <button type="submit">Publier le trajet</button>
+        </form>
+    <?php endif; ?>
+</body>
+</html>
