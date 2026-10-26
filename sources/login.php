@@ -10,7 +10,7 @@
   <label for="email">E-mail : </label><br>
   <input type="text" id="email" name="email"><br>
   <label for="password">Password : </label><br>
-  <input type="text" id="password" name="password">
+  <input type="password" id="password" name="password">
 <br />
 <br />
 <input type="submit" value="Connect"/>
