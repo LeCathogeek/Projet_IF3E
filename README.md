@@ -1,70 +1,48 @@
-# Projet IF3E – Carpooling
+# IF3E Carpooling project
 
-## Membres de l'équipe
-- À compléter avec les noms complets de l'équipe.
+This directory contains all necessary files needed in order to run the IF3E Carpooling project.
 
-## Logiciel requis
-- PHP 8.x
-- SQLite (intégré à PHP)
-- Un navigateur web moderne
+# Who worked on this project ?
+Only I, Étienne Pacault, have been working on this project.
 
-## Installation
-1. Placez le projet dans un dossier accessible par PHP.
-2. Vérifiez que le dossier `sources/databases/` est bien présent.
-3. Ouvrez un terminal dans le dossier du projet.
-4. Lancez le serveur PHP :
+# How to run the project ?
 
-```bash
-php -S localhost:8000
-```
+In order to run the project, please make sure you have the necessary tool installed. You'll need php so you can launch a php server.
+<br/>
+You may use php on linux simply with the tools provided by XAMPP.
+<br />
+XAMPP is available at <a href="https://www.apachefriends.org/fr/index.html">https://www.apachefriends.org/fr/index.html</a>.
+<br />
+<br />
 
-5. Ouvrez votre navigateur sur :
-
-```text
-http://localhost:8000/sources/index.php
-```
-
-## Configuration de la base de données
-Le projet utilise SQLite via le fichier :
-
-```text
-sources/databases/main_database.sq3
-```
-
-La structure de la base est décrite dans :
-- `database/schema.sql`
-- `database/data.sql`
-- `database/queries.sql`
-
-Le fichier `sources/db.php` crée automatiquement les tables si elles n'existent pas au premier accès.
-
-## Comptes de démonstration
-À compléter selon les comptes réellement créés dans la base.
-
-Exemple :
-- Email : admin@example.com
-- Mot de passe : à définir
-
-## Fonctionnalités implémentées
-- Inscription d'un utilisateur
-- Connexion / déconnexion
-- Tableau de bord utilisateur
-- Recherche de trajets
-- Structure de base de données pour les utilisateurs, véhicules, trajets, réservations, paiements et avis
-
-## Limites connues
-- Le projet est encore en phase de base fonctionnelle.
-- Les fonctionnalités métier avancées (réservation complète, paiement, admin, avis avancés) doivent être complétées.
-- Les données de démonstration doivent être générées avec des mots de passe réellement hashés.
-
-## Contribution de chaque membre
-- À compléter par chaque membre de l'équipe.
-
-## Démarrage rapide
-```bash
-php -S localhost:8000
-```
-Puis ouvrir :
-```text
-http://localhost:8000/sources/index.php
-```
+Once you've installed the software, php should be available at <code>/opt/lampp/bin/php</code>.
+<br />
+Just simply go to a folder in the PATH, such as <code>/usr/bin</code>
+<br />
+<code>cd /usr/bin</code>
+<br />
+<br/>
+Then, simply create a symbolink link pointing to the real executable.
+<br/>
+<code>sudo ln -s /opt/lampp/bin/php</code>
+<br />
+<br />
+Once this is done, you can go to the sources directory.
+<br />
+<code>cd sources</code>
+<br />
+<br />
+Then, you simply need to launch the server there.
+<br />
+<code>php -S localhost:8000</code>
+<br />
+You can change the 8000 if you prefer to launch the server on another port.
+<br />
+<br />
+Finally, you just need to open your favorite web browser and go to :
+<br />
+<a href="http://localhost:8000">http://localhost:8000</a>
+<br />
+or change 8000 by the port you've set in the command you've used in order to launch the php server.
+<br />
+<br />
