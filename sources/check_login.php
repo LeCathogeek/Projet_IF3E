@@ -22,13 +22,13 @@ if ($email === '' || $passwordSubmitted === '') {
 }
 
 try {
-    $sql = "SELECT email, password FROM users WHERE email = :email LIMIT 1";
+    $sql = "SELECT id, password FROM users WHERE email = :email LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($passwordSubmitted, $user['password'])) {
-        $_SESSION['email'] = $user['email'];
+        $_SESSION['id'] = $user['id'];
         header("Location: dashboard.php");
         exit;
     }
