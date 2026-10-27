@@ -12,7 +12,7 @@ $db = getDb();
 
 $userId = (int) $_SESSION['id'];
 
-$stmt = $db->prepare('SELECT firstname FROM users WHERE id = :id LIMIT 1');
+$stmt = $db->prepare('SELECT firstname, account_status, is_admin FROM users WHERE id = :id LIMIT 1');
 $stmt->execute([':id' => $userId]);
 $user = $stmt->fetch();
 
@@ -21,6 +21,8 @@ if (!$user) {
     header('Location: login.php');
     exit;
 }
+
+$_SESSION['is_admin'] = (int) ($user['is_admin'] ?? 0);
 
 $stmt = $db->prepare('
     SELECT t.id, t.departure_city, t.destination_city, t.departure_date, t.departure_time,
@@ -87,7 +89,7 @@ echoMenu();
                             </form>
                         <?php endif; ?>
 
-                        <?php if ($trip['status'] !== 'Completed'): ?>
+                        <?php if ($trip['status'] === 'Open' || $trip['status'] === 'Full'): ?>
                             <form method="post" action="complete_trip.php" style="display:inline;">
                                 <input type="hidden" name="trip_id" value="<?= (int) $trip['id'] ?>">
                                 <button type="submit">Mark as completed</button>
