@@ -42,7 +42,7 @@ $trips = $stmt->fetchAll();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mes trajets</title>
+    <title>My trips</title>
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
@@ -66,6 +66,7 @@ echoMenu();
                 <th>Price</th>
                 <th>Status</th>
                 <th>Reservations</th>
+                <th>Actions</th>
             </tr>
             <?php foreach ($trips as $trip): ?>
                 <tr>
@@ -78,6 +79,21 @@ echoMenu();
                     <td><?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</td>
                     <td><?= htmlspecialchars($trip['status']) ?></td>
                     <td><?= (int) $trip['total_places_reservees'] ?></td>
+                    <td>
+                        <?php if ($trip['status'] === 'Open' || $trip['status'] === 'Full'): ?>
+                            <form method="post" action="cancel_trip.php" style="display:inline;">
+                                <input type="hidden" name="trip_id" value="<?= (int) $trip['id'] ?>">
+                                <button type="submit">Cancel trip</button>
+                            </form>
+                        <?php endif; ?>
+
+                        <?php if ($trip['status'] !== 'Completed'): ?>
+                            <form method="post" action="complete_trip.php" style="display:inline;">
+                                <input type="hidden" name="trip_id" value="<?= (int) $trip['id'] ?>">
+                                <button type="submit">Mark as completed</button>
+                            </form>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>

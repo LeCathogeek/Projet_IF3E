@@ -24,32 +24,56 @@ if ($tripId <= 0 || $seats <= 0) {
     exit;
 }
 
-$stmt = $db->prepare('SELECT id, seats_available, price_per_seat FROM trips WHERE id = :trip_id AND status = "Open" LIMIT 1');
-$stmt->execute([':trip_id' => $tripId]);
-$trip = $stmt->fetch();
-
-if (!$trip) {
-    $_SESSION['flash_error'] = 'This trip is no longer available.';
-    header('Location: search_trips.php');
-    exit;
-}
-
-if ($seats > (int) $trip['seats_available']) {
-    $_SESSION['flash_error'] = 'Not enough places for this reservation.';
-    header('Location: search_trips.php');
-    exit;
-}
-
-$totalPrice = $seats * (float) $trip['price_per_seat'];
-
 $db->beginTransaction();
 
-$stmt = $db->prepare('INSERT INTO bookings (trip_id, passenger_id, seats_booked, booking_date, total_price, status) VALUES (:trip_id, :passenger_id, :seats_booked, date("now"), :total_price, "Pending")');
-$stmt->execute([':trip_id' => $tripId, ':passenger_id' => $userId, ':seats_booked' => $seats, ':total_price' => $totalPrice]);
-$stmt = $db->prepare('UPDATE trips SET seats_available = seats_available - :seats WHERE id = :trip_id');
-$stmt->execute([':trip_id' => $tripId, ':seats' => $seats]);
-$db->commit();
+try {
+    $stmt = $db->prepare('SELECT id, seats_available, price_per_seat, status FROM trips WHERE id = :trip_id LIMIT 1');
+    $stmt->execute([':trip_id' => $tripId]);
+    $trip = $stmt->fetch();
 
-$_SESSION['flash_success'] = 'You successfully booked the trip !';
-header('Location: search_trips.php');
-exit;
+    if (!$trip) {
+        throw new Exception('This trip is no longer available.');
+    }
+
+    if ($trip['status'] !== 'Open') {
+        throw new Exception('This trip is no longer available.');
+    }
+
+    if ($seats > (int) $trip['seats_available']) {
+        throw new Exception('Not enough places for this reservation.');
+    }
+
+    $totalPrice = $seats * (float) $trip['price_per_seat'];
+    $newSeats = (int) $trip['seats_available'] - $seats;
+
+    $stmt = $db->prepare('INSERT INTO bookings (trip_id, passenger_id, seats_booked, booking_date, total_price, status) VALUES (:trip_id, :passenger_id, :seats_booked, date("now"), :total_price, "Pending")');
+    $stmt->execute([
+        ':trip_id' => $tripId,
+        ':passenger_id' => $userId,
+        ':seats_booked' => $seats,
+        ':total_price' => $totalPrice,
+    ]);
+
+    $stmt = $db->prepare('UPDATE trips SET seats_available = :seats_available WHERE id = :trip_id');
+    $stmt->execute([
+        ':seats_available' => $newSeats,
+        ':trip_id' => $tripId,
+    ]);
+
+    if ($newSeats === 0) {
+        $stmt = $db->prepare('UPDATE trips SET status = "Full" WHERE id = :trip_id');
+        $stmt->execute([':trip_id' => $tripId]);
+    }
+
+    $db->commit();
+
+    $_SESSION['flash_success'] = 'You successfully booked the trip !';
+    header('Location: search_trips.php');
+    exit;
+} catch (Exception $e) {
+    $db->rollBack();
+
+    $_SESSION['flash_error'] = $e->getMessage();
+    header('Location: search_trips.php');
+    exit;
+}

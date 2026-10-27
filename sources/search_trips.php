@@ -24,6 +24,9 @@ if (!$user) {
 $successMessage = $_SESSION['flash_success'] ?? '';
 unset($_SESSION['flash_success']);
 
+$errorMessage = $_SESSION['flash_error'] ?? '';
+unset($_SESSION['flash_error']);
+
 $departure = trim((string) ($_GET['departure'] ?? ''));
 $destination = trim((string) ($_GET['destination'] ?? ''));
 $date = trim((string) ($_GET['date'] ?? ''));
@@ -31,7 +34,7 @@ $seats = max(1, (int) ($_GET['seats'] ?? 1));
 $maxPrice = trim((string) ($_GET['max_price'] ?? ''));
 
 $sql = "
-    SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.seats_available, t.price_per_seat, u.firstname AS driver_name,
+    SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.seats_available, t.price_per_seat, t.status, u.firstname AS driver_name,
            v.brand, v.model FROM trips t JOIN users u ON u.id = t.driver_id
     LEFT JOIN vehicles v ON v.id = t.vehicle_id
     WHERE t.status = 'Open'";
@@ -90,6 +93,12 @@ echoMenu();
         </script>
     <?php endif; ?>
 
+    <?php if ($errorMessage !== ''): ?>
+        <script>
+            alert("<?= htmlspecialchars(addslashes($errorMessage), ENT_QUOTES, 'UTF-8') ?>");
+        </script>
+    <?php endif; ?>
+
     <form method="get" action="search_trips.php">
         <label for="departure">Departure :</label><br>
         <input type="text" id="departure" name="departure" value="<?= htmlspecialchars($departure) ?>"><br><br>
@@ -106,13 +115,13 @@ echoMenu();
         <label for="max_price">Maximal price (€) :</label><br>
         <input type="number" id="max_price" name="max_price" min="0" step="0.01" value="<?= htmlspecialchars($maxPrice) ?>"><br><br>
 
-        <button type="submit">Rechercher</button>
+        <button type="submit">Search</button>
     </form>
 
     <hr>
 
     <?php if (empty($trips)): ?>
-        <p>No trip available for those criteria</p>
+        <p>No trip available for those criteria.</p>
     <?php else: ?>
         <?php foreach ($trips as $trip): ?>
             <div style="border:1px solid #ccc; padding:12px; margin:12px 0; max-width:900px;">
@@ -124,6 +133,7 @@ echoMenu();
                 <p><strong>Hour :</strong> <?= htmlspecialchars($trip['departure_time']) ?></p>
                 <p><strong>Available seats :</strong> <?= (int) $trip['seats_available'] ?></p>
                 <p><strong>Price :</strong> <?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</p>
+                <p><strong>Status :</strong> <?= htmlspecialchars($trip['status']) ?></p>
 
                 <form method="post" action="reserve_trip.php">
                     <input type="hidden" name="trip_id" value="<?= (int) $trip['id'] ?>">
