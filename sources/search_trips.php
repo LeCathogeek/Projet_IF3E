@@ -31,12 +31,8 @@ $seats = max(1, (int) ($_GET['seats'] ?? 1));
 $maxPrice = trim((string) ($_GET['max_price'] ?? ''));
 
 $sql = "
-    SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date,
-           t.departure_time, t.seats_available, t.price_per_seat,
-           u.firstname AS driver_name,
-           v.brand, v.model
-    FROM trips t
-    JOIN users u ON u.id = t.driver_id
+    SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.seats_available, t.price_per_seat, u.firstname AS driver_name,
+           v.brand, v.model FROM trips t JOIN users u ON u.id = t.driver_id
     LEFT JOIN vehicles v ON v.id = t.vehicle_id
     WHERE t.status = 'Open'";
 
@@ -77,11 +73,11 @@ $trips = $stmt->fetchAll();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Recherche de trajets</title>
+    <title>Find a trip</title>
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-    <h1>Rechercher un trajet</h1>
+    <h1>Find a trip</h1>
     <p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
 
     <?php
@@ -95,7 +91,7 @@ echoMenu();
     <?php endif; ?>
 
     <form method="get" action="search_trips.php">
-        <label for="departure">Départ :</label><br>
+        <label for="departure">Departure :</label><br>
         <input type="text" id="departure" name="departure" value="<?= htmlspecialchars($departure) ?>"><br><br>
 
         <label for="destination">Destination :</label><br>
@@ -104,10 +100,10 @@ echoMenu();
         <label for="date">Date :</label><br>
         <input type="date" id="date" name="date" value="<?= htmlspecialchars($date) ?>"><br><br>
 
-        <label for="seats">Places minimales :</label><br>
+        <label for="seats">Minimal number of seats :</label><br>
         <input type="number" id="seats" name="seats" min="1" value="<?= (int) $seats ?>"><br><br>
 
-        <label for="max_price">Prix maximum (€) :</label><br>
+        <label for="max_price">Maximal price (€) :</label><br>
         <input type="number" id="max_price" name="max_price" min="0" step="0.01" value="<?= htmlspecialchars($maxPrice) ?>"><br><br>
 
         <button type="submit">Rechercher</button>
@@ -116,24 +112,24 @@ echoMenu();
     <hr>
 
     <?php if (empty($trips)): ?>
-        <p>Aucun trajet disponible pour ces critères.</p>
+        <p>No trip available for those criteria</p>
     <?php else: ?>
         <?php foreach ($trips as $trip): ?>
             <div style="border:1px solid #ccc; padding:12px; margin:12px 0; max-width:900px;">
-                <p><strong>Conducteur :</strong> <?= htmlspecialchars($trip['driver_name']) ?></p>
-                <p><strong>Voiture :</strong> <?= htmlspecialchars(($trip['brand'] ?? '')) ?> <?= htmlspecialchars(($trip['model'] ?? '')) ?></p>
-                <p><strong>Départ :</strong> <?= htmlspecialchars($trip['departure_city']) ?></p>
+                <p><strong>Driver :</strong> <?= htmlspecialchars($trip['driver_name']) ?></p>
+                <p><strong>Car :</strong> <?= htmlspecialchars(($trip['brand'] ?? '')) ?> <?= htmlspecialchars(($trip['model'] ?? '')) ?></p>
+                <p><strong>Departure :</strong> <?= htmlspecialchars($trip['departure_city']) ?></p>
                 <p><strong>Destination :</strong> <?= htmlspecialchars($trip['destination_city']) ?></p>
                 <p><strong>Date :</strong> <?= htmlspecialchars($trip['departure_date']) ?></p>
-                <p><strong>Heure :</strong> <?= htmlspecialchars($trip['departure_time']) ?></p>
-                <p><strong>Places disponibles :</strong> <?= (int) $trip['seats_available'] ?></p>
-                <p><strong>Prix :</strong> <?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</p>
+                <p><strong>Hour :</strong> <?= htmlspecialchars($trip['departure_time']) ?></p>
+                <p><strong>Available seats :</strong> <?= (int) $trip['seats_available'] ?></p>
+                <p><strong>Price :</strong> <?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</p>
 
                 <form method="post" action="reserve_trip.php">
                     <input type="hidden" name="trip_id" value="<?= (int) $trip['id'] ?>">
-                    <label for="seats_<?= (int) $trip['id'] ?>">Nombre de places :</label>
+                    <label for="seats_<?= (int) $trip['id'] ?>">Number of seats :</label>
                     <input type="number" id="seats_<?= (int) $trip['id'] ?>" name="seats" min="1" max="<?= (int) $trip['seats_available'] ?>" value="1">
-                    <button type="submit">Réserver</button>
+                    <button type="submit">Book</button>
                 </form>
             </div>
         <?php endforeach; ?>

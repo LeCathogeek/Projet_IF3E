@@ -1,18 +1,12 @@
 <?php
 function getDb(): PDO {
     $dbDir = __DIR__ . '/databases';
-    if (!is_dir($dbDir)) {
-        mkdir($dbDir, 0777, true);
-    }
-
     $dbFile = $dbDir . '/main_database.sq3';
     $pdo = new PDO('sqlite:' . $dbFile);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     $pdo->exec('PRAGMA foreign_keys = ON;');
-
     initializeSchema($pdo);
-
     return $pdo;
 }
 
