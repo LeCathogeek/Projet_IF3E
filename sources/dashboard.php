@@ -12,7 +12,7 @@ $db = getDb();
 
 $userId = (int) $_SESSION['id'];
 
-$stmt = $db->prepare('SELECT firstname, account_status FROM users WHERE id = :id LIMIT 1');
+$stmt = $db->prepare('SELECT firstname, account_status, is_admin FROM users WHERE id = :id LIMIT 1');
 $stmt->execute([':id' => $userId]);
 $user = $stmt->fetch();
 
@@ -22,20 +22,25 @@ if (!$user) {
     exit;
 }
 
-$trips = $db->query(
-    "SELECT t.*, u.firstname AS driver_name
-     FROM trips t
-     JOIN users u ON u.id = t.driver_id
-     WHERE t.status = 'Open'
-     ORDER BY t.departure_date, t.departure_time
-     LIMIT 10"
-)->fetchAll();
+$_SESSION['is_admin'] = (int) ($user['is_admin'] ?? 0);
+
+$stmt = $db->prepare('SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.status, u.firstname AS driver_name, b.id AS booking_id, b.status AS booking_status, b.seats_booked, b.total_price
+    FROM trips t
+    JOIN users u ON u.id = t.driver_id
+    LEFT JOIN bookings b ON b.trip_id = t.id AND b.passenger_id = :user_id
+    WHERE t.status = "Open"
+    ORDER BY t.departure_date, t.departure_time
+    LIMIT 10');
+$stmt->execute([':user_id' => $userId]);
+$trips = $stmt->fetchAll();
 
 $stmt = $db->prepare('
     SELECT b.id, b.status, b.seats_booked, b.total_price,
-           t.departure_city, t.destination_city, t.departure_date, t.departure_time
+           t.departure_city, t.destination_city, t.departure_date, t.departure_time,
+           p.payment_status
     FROM bookings b
     JOIN trips t ON t.id = b.trip_id
+    LEFT JOIN payments p ON p.booking_id = b.id
     WHERE b.passenger_id = :user_id
     ORDER BY b.id DESC
 ');
@@ -55,6 +60,10 @@ $bookings = $stmt->fetchAll();
 echoMenu();
 ?>
 
+<?php if ((int) ($_SESSION['is_admin'] ?? 0) === 1): ?>
+    <p><a href="admin_stats.php">Admin stats</a> | <a href="admin_users.php">Admin users</a></p>
+<?php endif; ?>
+
 <h3>My reservations</h3>
 <?php if (!empty($bookings)): ?>
     <table border="1" cellpadding="8">
@@ -66,6 +75,8 @@ echoMenu();
             <th>Places</th>
             <th>Total</th>
             <th>Status</th>
+            <th>Payment</th>
+            <th>Action</th>
         </tr>
         <?php foreach ($bookings as $booking): ?>
             <tr>
@@ -76,6 +87,14 @@ echoMenu();
                 <td><?= (int) $booking['seats_booked'] ?></td>
                 <td><?= number_format((float) $booking['total_price'], 2, ',', ' ') ?> €</td>
                 <td><?= htmlspecialchars($booking['status']) ?></td>
+                <td><?= htmlspecialchars($booking['payment_status'] ?? 'Pending') ?></td>
+                <td>
+                    <?php if (($booking['status'] ?? 'Pending') === 'Pending'): ?>
+                        <a href="pay_booking.php?booking_id=<?= (int) $booking['id'] ?>">Pay</a>
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
+                </td>
             </tr>
         <?php endforeach; ?>
     </table>

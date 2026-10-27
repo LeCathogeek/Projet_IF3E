@@ -10,6 +10,19 @@ function getDb(): PDO {
     return $pdo;
 }
 
+function columnExists(PDO $pdo, string $table, string $column): bool {
+    $stmt = $pdo->query("PRAGMA table_info('" . $table . "')");
+    $columns = $stmt->fetchAll();
+
+    foreach ($columns as $col) {
+        if (($col['name'] ?? '') === $column) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function initializeSchema(PDO $pdo): void {
     $sql = <<<'SQL'
 CREATE TABLE IF NOT EXISTS users (
@@ -22,6 +35,7 @@ CREATE TABLE IF NOT EXISTS users (
     birthdate TEXT,
     account_creation_date TEXT NOT NULL DEFAULT (date('now')),
     account_status INTEGER NOT NULL DEFAULT 0 CHECK (account_status IN (0, 1)),
+    is_admin INTEGER NOT NULL DEFAULT 0 CHECK (is_admin IN (0, 1)),
     profile_picture TEXT
 );
 
@@ -90,4 +104,8 @@ CREATE TABLE IF NOT EXISTS reviews (
 SQL;
 
     $pdo->exec($sql);
+
+    if (!columnExists($pdo, 'users', 'is_admin')) {
+        $pdo->exec('ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0');
+    }
 }
