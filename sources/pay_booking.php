@@ -7,16 +7,57 @@ if (!isset($_SESSION['id'])) {
 }
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bookingId = (int) ($_POST['booking_id'] ?? 0);
+    $cardNumber = preg_replace('/\s+/', '', trim((string) ($_POST['card_number'] ?? '')));
+    $expiry = trim((string) ($_POST['expiry'] ?? ''));
+    $cvc = trim((string) ($_POST['cvc'] ?? ''));
 
     if ($bookingId <= 0) {
         $_SESSION['flash_error'] = 'Invalid payment.';
         header('Location: dashboard.php');
+        exit;
+    }
+
+    if (!preg_match('/^[0-9]{12}$/', $cardNumber)) {
+        $_SESSION['flash_error'] = 'The card number must contain 12 digits.';
+        header('Location: pay_booking.php?booking_id=' . $bookingId);
+        exit;
+    }
+
+    if (!preg_match('/^(0[1-9]|1[0-2])\/([0-9]{2}|[0-9]{4})$/', $expiry)) {
+        $_SESSION['flash_error'] = 'The expiration date must be in MM/YY or MM/YYYY format.';
+        header('Location: pay_booking.php?booking_id=' . $bookingId);
+        exit;
+    }
+
+    if (!preg_match('/^[0-9]{3}$/', $cvc)) {
+        $_SESSION['flash_error'] = 'The CVC must contain 3 digits.';
+        header('Location: pay_booking.php?booking_id=' . $bookingId);
+        exit;
+    }
+
+    $expiryParts = explode('/', $expiry);
+    $month = (int) $expiryParts[0];
+    $yearPart = (string) $expiryParts[1];
+
+    if (strlen($yearPart) === 2) {
+        $year = 2000 + (int) $yearPart;
+    } else {
+        $year = (int) $yearPart;
+    }
+
+    $currentMonth = (int) date('n');
+    $currentYear = (int) date('Y');
+
+    if ($year < $currentYear || ($year === $currentYear && $month < $currentMonth)) {
+        $_SESSION['flash_error'] = 'The card is expired.';
+        header('Location: pay_booking.php?booking_id=' . $bookingId);
         exit;
     }
 
@@ -114,6 +155,16 @@ echoMenu();
 
     <form method="post" action="pay_booking.php">
         <input type="hidden" name="booking_id" value="<?= (int) $booking['id'] ?>">
+
+        <label>Card number</label><br>
+        <input type="text" name="card_number" required maxlength="12" pattern="[0-9]{12}" placeholder="123456789012"><br><br>
+
+        <label>Expiration date</label><br>
+        <input type="text" name="expiry" required maxlength="7" pattern="(0[1-9]|1[0-2])/(\d{2}|\d{4})" placeholder="MM/YY"><br><br>
+
+        <label>CVC</label><br>
+        <input type="text" name="cvc" required maxlength="3" pattern="[0-9]{3}" placeholder="123"><br><br>
+
         <button type="submit">Confirm payment</button>
     </form>
 </body>
