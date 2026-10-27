@@ -44,7 +44,7 @@ $bookings = $stmt->fetchAll();
 ?>
 <html>
 <head>
-<title>Projet Databases IF3E</title>
+<title>Carepooling website IF3E</title>
 <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>

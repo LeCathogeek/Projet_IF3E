@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Ajouter une voiture</title>
+    <title>Add a car</title>
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-    <h1>Ajouter une voiture</h1>
+    <h1>Add a car</h1>
 
     <?php
 echoMenu();

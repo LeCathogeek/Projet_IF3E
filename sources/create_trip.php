@@ -82,20 +82,20 @@ $vehicleList = $vehicles->fetchAll();
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-    <h1>Publier un trajet</h1>
+    <h1>Publish a trip</h1>
 
     <?php
 echoMenu();
 ?>
 
     <?php if (empty($vehicleList)): ?>
-        <p>Vous n'avez pas encore de voiture enregistrée.</p>
-        <p><a href="add_vehicle.php">Ajouter une voiture</a></p>
+        <p>You have not recorded any vehicle yet.</p>
+        <p><a href="add_vehicle.php">Add a car.</a></p>
     <?php else: ?>
         <form method="post">
-            <label>Choisir une voiture</label><br>
+            <label>Choose a car</label><br>
             <select name="vehicle_id" required>
-                <option value="">-- Sélectionner --</option>
+                <option value="">-- Select --</option>
                 <?php foreach ($vehicleList as $vehicle): ?>
                     <option value="<?= (int) $vehicle['id'] ?>">
                         <?= htmlspecialchars($vehicle['brand']) ?> <?= htmlspecialchars($vehicle['model']) ?>
@@ -104,25 +104,25 @@ echoMenu();
                 <?php endforeach; ?>
             </select><br><br>
 
-            <label>Ville de départ</label><br>
+            <label>Departure city</label><br>
             <input type="text" name="departure_city" required><br><br>
 
-            <label>Ville de destination</label><br>
+            <label>Destination city</label><br>
             <input type="text" name="destination_city" required><br><br>
 
-            <label>Date de départ</label><br>
+            <label>Departure date</label><br>
             <input type="date" name="departure_date" required><br><br>
 
-            <label>Heure de départ</label><br>
+            <label>Departure hour</label><br>
             <input type="time" name="departure_time" required><br><br>
 
-            <label>Places disponibles</label><br>
+            <label>Remaining seats</label><br>
             <input type="number" name="seats_available" min="1" required><br><br>
 
-            <label>Prix par place (€)</label><br>
+            <label>Price per seat (€)</label><br>
             <input type="number" name="price_per_seat" min="0" step="0.01" required><br><br>
 
-            <button type="submit">Publier le trajet</button>
+            <button type="submit">Publish trip</button>
         </form>
     <?php endif; ?>
 </body>
