@@ -39,7 +39,7 @@ Then, you simply have to create a symbolic link pointing to the real executable.
 Once this is done, you can go to the sources directory of the project.
 <br />
 <br />
-<code>cd PLACE_WHERE_THE_PROJECT_IS/sources</code>
+<code>cd PATH_WHERE_THE_PROJECT_IS/sources</code>
 <br />
 <br />
 <br />
