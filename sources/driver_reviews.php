@@ -6,7 +6,7 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
-require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];

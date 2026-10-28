@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

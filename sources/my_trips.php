@@ -6,13 +6,12 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
-require __DIR__ . '/db.php';
 require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];
 
-$stmt = $db->prepare('SELECT firstname, account_status, is_admin FROM users WHERE id = :id LIMIT 1');
+$stmt = $db->prepare('SELECT firstname, account_status, account_status FROM users WHERE id = :id LIMIT 1');
 $stmt->execute([':id' => $userId]);
 $user = $stmt->fetch();
 
@@ -28,7 +27,7 @@ if ((int) ($user['account_status'] ?? 0) !== 1) {
     exit;
 }
 
-$_SESSION['is_admin'] = (int) ($user['is_admin'] ?? 0);
+$_SESSION['account_status'] = (int) ($user['account_status'] ?? 0);
 
 $stmt = $db->prepare('SELECT t.id, t.departure_city, t.destination_city, t.departure_date, t.departure_time,
             t.status AS trip_status, v.brand, v.model,

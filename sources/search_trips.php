@@ -7,7 +7,6 @@ if (!isset($_SESSION['id'])) {
 }
 
 require __DIR__ . '/basic_functions.php';
-require __DIR__ . '/db.php';
 $db = getDb();
 
 $userId = (int) $_SESSION['id'];

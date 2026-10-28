@@ -6,10 +6,10 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
-require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
-if ((int) ($_SESSION['is_admin'] ?? 0) !== 1) {
+if ((int) ($_SESSION['account_status'] ?? 0) !== 1) {
     header('Location: dashboard.php');
     exit;
 }

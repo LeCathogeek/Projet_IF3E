@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $pdo = getDb();
 
 $message = $_SESSION['flash_error'] ?? '';

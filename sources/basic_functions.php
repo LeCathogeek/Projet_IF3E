@@ -1,6 +1,6 @@
 <?php
 function echoMenu(): void {
-    $isAdmin = $_SESSION['is_admin'] ?? 0;
+    $isAdmin = $_SESSION['account_status'] ?? 0;
 
     echo '<div id="navigation">';
     echo '<ul>';
@@ -15,7 +15,16 @@ function echoMenu(): void {
         echo '<li><a href="admin_stats.php">Admin stats</a></li>';
         echo '<li><a href="admin_users.php">Admin users</a></li>';
     }
-
     echo '</ul>';
     echo '</div>';
+}
+
+function getDb(): PDO {
+    $dbDir = __DIR__ . '/databases';
+    $dbFile = $dbDir . '/main_database.sq3';
+    $pdo = new PDO('sqlite:' . $dbFile);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->exec('PRAGMA foreign_keys = ON;');
+    return $pdo;
 }

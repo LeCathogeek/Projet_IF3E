@@ -6,17 +6,17 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
-require __DIR__ . '/db.php';
+require __DIR__ . '/basic_functions.php';
 $db = getDb();
 
-if ((int) ($_SESSION['is_admin'] ?? 0) !== 1) {
+if ((int) ($_SESSION['account_status'] ?? 0) !== 1) {
     header('Location: dashboard.php');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = (int) ($_POST['user_id'] ?? 0);
-    $isAdmin = (int) ($_POST['is_admin'] ?? 0);
+    $isAdmin = (int) ($_POST['account_status'] ?? 0);
 
     if ($userId <= 0) {
         $_SESSION['flash_error'] = 'Invalid user.';
@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = $db->prepare('UPDATE users SET is_admin = :is_admin WHERE id = :user_id');
+    $stmt = $db->prepare('UPDATE users SET account_status = :account_status WHERE id = :user_id');
     $stmt->execute([
-        ':is_admin' => $isAdmin,
+        ':account_status' => $isAdmin,
         ':user_id' => $userId,
     ]);
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$stmt = $db->prepare('SELECT id, firstname, name, email, is_admin FROM users ORDER BY firstname, name');
+$stmt = $db->prepare('SELECT id, firstname, name, email, account_status FROM users ORDER BY firstname, name');
 $stmt->execute();
 $users = $stmt->fetchAll();
 ?>
@@ -73,13 +73,13 @@ $users = $stmt->fetchAll();
                 <td><?= (int) $user['id'] ?></td>
                 <td><?= htmlspecialchars($user['firstname']) ?> <?= htmlspecialchars($user['name']) ?></td>
                 <td><?= htmlspecialchars($user['email']) ?></td>
-                <td><?= ((int) $user['is_admin'] === 1) ? 'Admin' : 'User' ?></td>
+                <td><?= ((int) $user['account_status'] === 1) ? 'Admin' : 'User' ?></td>
                 <td>
                     <?php if ((int) $user['id'] !== (int) $_SESSION['id']): ?>
                         <form method="post" action="admin_users.php">
                             <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
-                            <input type="hidden" name="is_admin" value="<?= ((int) $user['is_admin'] === 1) ? 0 : 1 ?>">
-                            <button type="submit"><?= ((int) $user['is_admin'] === 1) ? 'Remove admin' : 'Make admin' ?></button>
+                            <input type="hidden" name="account_status" value="<?= ((int) $user['account_status'] === 1) ? 0 : 1 ?>">
+                            <button type="submit"><?= ((int) $user['account_status'] === 1) ? 'Remove admin' : 'Make admin' ?></button>
                         </form>
                     <?php else: ?>
                         -
