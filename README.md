@@ -9,17 +9,15 @@ Only one member created the project, Étienne Pacault.
 
 In order to run the project, please make sure you have the necessary tool installed. 
 <br />
-<br />
 You'll need php so you can launch a php server.
 <br/>
-<br />
 You may use php on linux simply with the tools provided by XAMPP.
 <br />
 <br />
 XAMPP is available at <a href="https://www.apachefriends.org/fr/index.html">https://www.apachefriends.org/fr/index.html</a>.
 <br />
 <br />
-Once you've installed the software, php should be available at <code>/opt/lampp/bin/php</code>.
+Once you've installed the software, the PHP software should be available at <code>/opt/lampp/bin/php</code>.
 <br />
 Just simply go to a folder in the PATH, such as <code>/usr/bin</code>
 <br />
