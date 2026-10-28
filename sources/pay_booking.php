@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if (!preg_match('/^[0-9]{12}$/', $cardNumber)) {
-        $_SESSION['flash_error'] = 'The card number must contain 12 digits.';
+    if (!preg_match('/^[0-9]{16}$/', $cardNumber)) {
+        $_SESSION['flash_error'] = 'The card number must contain 16 digits.';
         header('Location: pay_booking.php?booking_id=' . $bookingId);
         exit;
     }
