@@ -157,7 +157,7 @@ echoMenu();
         <input type="hidden" name="booking_id" value="<?= (int) $booking['id'] ?>">
 
         <label>Card number</label><br>
-        <input type="text" name="card_number" required maxlength="12" pattern="[0-9]{12}" placeholder="123456789012"><br><br>
+        <input type="text" name="card_number" required maxlength="16" pattern="[0-9]{16}" placeholder="1234 5678 9012 3456"><br><br>
 
         <label>Expiration date</label><br>
         <input type="text" name="expiry" required maxlength="7" pattern="(0[1-9]|1[0-2])/(\d{2}|\d{4})" placeholder="MM/YY"><br><br>

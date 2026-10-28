@@ -81,8 +81,6 @@ $trips = $stmt->fetchAll();
 </head>
 <body>
     <h1>Find a trip</h1>
-    <p>Hello <?= htmlspecialchars($user['firstname']) ?> !</p>
-
     <?php
 echoMenu();
 ?>

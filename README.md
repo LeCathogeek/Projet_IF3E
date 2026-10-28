@@ -2,8 +2,8 @@
 
 This directory contains all necessary files needed in order to run the IF3E Carpooling project.
 
-# Who worked on this project ?
-Only I, Étienne Pacault, have been working on this project.
+# Team members
+Only one member created the project, Étienne Pacault.
 
 # How to run the project ?
 
@@ -22,14 +22,14 @@ Just simply go to a folder in the PATH, such as <code>/usr/bin</code>
 <code>cd /usr/bin</code>
 <br />
 <br/>
-Then, simply create a symbolink link pointing to the real executable.
+Then, simply create a symbolic link pointing to the real executable.
 <br/>
 <code>sudo ln -s /opt/lampp/bin/php</code>
 <br />
 <br />
-Once this is done, you can go to the sources directory.
+Once this is done, you can go to the sources directory of the project.
 <br />
-<code>cd sources</code>
+<code>cd PLACE_WHERE_THE_PROJECT_IS/sources</code>
 <br />
 <br />
 Then, you simply need to launch the server there.
