@@ -14,7 +14,7 @@ if ((int) ($_SESSION['is_admin'] ?? 0) !== 1) {
     exit;
 }
 
-$stmt = $db->prepare('SELECT COUNT(*) AS total_users FROM users');
+$stmt = $db->prepare('SELECT COUNT(*) AS total_users FROM users WHERE account_status = 1');
 $stmt->execute();
 $totalUsers = (int) $stmt->fetchColumn();
 
@@ -55,7 +55,7 @@ $pendingPayments = (int) $stmt->fetchColumn();
 
     <h3>Textual stats</h3>
     <ul>
-        <li>Total users: <?= (int) $totalUsers ?></li>
+        <li>Active users: <?= (int) $totalUsers ?></li>
         <li>Total trips: <?= (int) $totalTrips ?></li>
         <li>Total bookings: <?= (int) $totalBookings ?></li>
         <li>Open trips: <?= (int) $openTrips ?></li>

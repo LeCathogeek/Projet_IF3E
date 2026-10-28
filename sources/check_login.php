@@ -19,12 +19,18 @@ try {
         exit;
     }
 
-    $sql = 'SELECT id, password, is_admin FROM users WHERE email = :email LIMIT 1';
+    $sql = 'SELECT id, password, account_status, is_admin FROM users WHERE email = :email LIMIT 1';
     $stmt = $conn->prepare($sql);
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($passwordSubmitted, $user['password'])) {
+        if ((int) ($user['account_status'] ?? 0) !== 1) {
+            $_SESSION['flash_error'] = 'This account is inactive.';
+            header('Location: login.php');
+            exit;
+        }
+
         $_SESSION['id'] = (int) $user['id'];
         $_SESSION['is_admin'] = (int) ($user['is_admin'] ?? 0);
         header('Location: dashboard.php');

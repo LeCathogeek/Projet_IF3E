@@ -22,28 +22,22 @@ if (!$user) {
     exit;
 }
 
+if ((int) ($user['account_status'] ?? 0) !== 1) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
+
 $_SESSION['is_admin'] = (int) ($user['is_admin'] ?? 0);
 
-$stmt = $db->prepare('SELECT t.id, t.driver_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.status, u.firstname AS driver_name, b.id AS booking_id, b.status AS booking_status, b.seats_booked, b.total_price
-    FROM trips t
-    JOIN users u ON u.id = t.driver_id
-    LEFT JOIN bookings b ON b.trip_id = t.id AND b.passenger_id = :user_id
-    WHERE t.status = "Open"
-    ORDER BY t.departure_date, t.departure_time
-    LIMIT 10');
-$stmt->execute([':user_id' => $userId]);
-$trips = $stmt->fetchAll();
-
-$stmt = $db->prepare('
-    SELECT b.id, b.status, b.seats_booked, b.total_price,
-           t.departure_city, t.destination_city, t.departure_date, t.departure_time,
-           p.payment_status
-    FROM bookings b
-    JOIN trips t ON t.id = b.trip_id
-    LEFT JOIN payments p ON p.booking_id = b.id
-    WHERE b.passenger_id = :user_id
-    ORDER BY b.id DESC
-');
+$stmt = $db->prepare('SELECT b.id, b.status, b.seats_booked, b.total_price,
+       t.departure_city, t.destination_city, t.departure_date, t.departure_time,
+       p.payment_status
+FROM bookings b
+JOIN trips t ON t.id = b.trip_id
+LEFT JOIN payments p ON p.booking_id = b.id
+WHERE b.passenger_id = :user_id
+ORDER BY b.id DESC');
 $stmt->execute([':user_id' => $userId]);
 $bookings = $stmt->fetchAll();
 ?>

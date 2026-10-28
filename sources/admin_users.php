@@ -24,6 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ((int) $_SESSION['id'] === $userId) {
+        $_SESSION['flash_error'] = 'You cannot change your own admin role.';
+        header('Location: admin_users.php');
+        exit;
+    }
+
     $stmt = $db->prepare('UPDATE users SET is_admin = :is_admin WHERE id = :user_id');
     $stmt->execute([
         ':is_admin' => $isAdmin,
@@ -69,11 +75,15 @@ $users = $stmt->fetchAll();
                 <td><?= htmlspecialchars($user['email']) ?></td>
                 <td><?= ((int) $user['is_admin'] === 1) ? 'Admin' : 'User' ?></td>
                 <td>
-                    <form method="post" action="admin_users.php">
-                        <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
-                        <input type="hidden" name="is_admin" value="<?= ((int) $user['is_admin'] === 1) ? 0 : 1 ?>">
-                        <button type="submit"><?= ((int) $user['is_admin'] === 1) ? 'Remove admin' : 'Make admin' ?></button>
-                    </form>
+                    <?php if ((int) $user['id'] !== (int) $_SESSION['id']): ?>
+                        <form method="post" action="admin_users.php">
+                            <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
+                            <input type="hidden" name="is_admin" value="<?= ((int) $user['is_admin'] === 1) ? 0 : 1 ?>">
+                            <button type="submit"><?= ((int) $user['is_admin'] === 1) ? 'Remove admin' : 'Make admin' ?></button>
+                        </form>
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
