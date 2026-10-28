@@ -1,33 +1,20 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['id'])) {
     header('Location: login.php');
     exit;
 }
-
 require __DIR__ . '/basic_functions.php';
 $db = getDb();
-
 $userId = (int) $_SESSION['id'];
-
 $stmt = $db->prepare('SELECT firstname, account_status FROM users WHERE id = :id LIMIT 1');
 $stmt->execute([':id' => $userId]);
 $user = $stmt->fetch();
-
 if (!$user) {
     session_destroy();
     header('Location: login.php');
     exit;
 }
-
-if ((int) ($user['account_status'] ?? 0) !== 1) {
-    session_destroy();
-    header('Location: login.php');
-    exit;
-}
-
-$_SESSION['account_status'] = (int) ($user['account_status'] ?? 0);
 
 $successMessage = $_SESSION['flash_success'] ?? '';
 unset($_SESSION['flash_success']);

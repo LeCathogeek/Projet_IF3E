@@ -20,15 +20,6 @@ if (!$user) {
     header('Location: login.php');
     exit;
 }
-
-if ((int) ($user['account_status'] ?? 0) !== 1) {
-    session_destroy();
-    header('Location: login.php');
-    exit;
-}
-
-$_SESSION['account_status'] = (int) ($user['account_status'] ?? 0);
-
 $stmt = $db->prepare('SELECT t.id, t.departure_city, t.destination_city, t.departure_date, t.departure_time,
             t.status AS trip_status, v.brand, v.model,
             COALESCE(SUM(b.seats_booked), 0) AS total_places_reservees

@@ -4,22 +4,18 @@ session_start();
 try {
     require __DIR__ . '/basic_functions.php';
     $conn = getDb();
-
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Location: login.php');
         exit;
     }
-
     $email = trim($_POST['email'] ?? '');
     $passwordSubmitted = $_POST['password'] ?? '';
-
     if ($email === '' || $passwordSubmitted === '') {
         $_SESSION['flash_error'] = 'Please fill your email adress and your password.';
         header('Location: login.php');
         exit;
     }
-
-    $sql = 'SELECT id, password FROM users WHERE email = :email LIMIT 1';
+    $sql = 'SELECT id, password, account_status FROM users WHERE email = :email LIMIT 1';
     $stmt = $conn->prepare($sql);
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch();
