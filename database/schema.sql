@@ -77,12 +77,16 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (driver_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_trip_passenger ON reviews (trip_id, passenger_id);
+
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_trips_departure ON trips(departure_city, departure_date);
 CREATE INDEX IF NOT EXISTS idx_trips_destination ON trips(destination_city, departure_date);
 CREATE INDEX IF NOT EXISTS idx_bookings_trip ON bookings(trip_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_driver ON reviews(driver_id, rating);
 
 -- Exemple d'utilisations validées :
 -- 1. Trouver tous les trajets ouverts depuis Montbéliard vers Strasbourg.
 -- 2. Lister les réservations d'un utilisateur donné.
 -- 3. Calculer la note moyenne d'un conducteur.
+

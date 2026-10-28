@@ -30,9 +30,19 @@ if ((int) ($user['account_status'] ?? 0) !== 1) {
 
 $_SESSION['is_admin'] = (int) ($user['is_admin'] ?? 0);
 
+$successMessage = $_SESSION['flash_success'] ?? '';
+unset($_SESSION['flash_success']);
+
+$errorMessage = $_SESSION['flash_error'] ?? '';
+unset($_SESSION['flash_error']);
+
 $stmt = $db->prepare('SELECT b.id, b.status, b.seats_booked, b.total_price,
-       t.departure_city, t.destination_city, t.departure_date, t.departure_time,
-       p.payment_status
+        t.id AS trip_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.status AS trip_status,
+        p.payment_status,
+        EXISTS (
+            SELECT 1 FROM reviews r
+            WHERE r.trip_id = t.id AND r.passenger_id = :user_id
+        ) AS has_reviewed
 FROM bookings b
 JOIN trips t ON t.id = b.trip_id
 LEFT JOIN payments p ON p.booking_id = b.id
@@ -43,7 +53,7 @@ $bookings = $stmt->fetchAll();
 ?>
 <html>
 <head>
-<title>Carpooling website IF3E</title>
+<title>Carepooling website IF3E</title>
 <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
@@ -56,6 +66,18 @@ echoMenu();
 
 <?php if ((int) ($_SESSION['is_admin'] ?? 0) === 1): ?>
     <p><a href="admin_stats.php">Admin stats</a> | <a href="admin_users.php">Admin users</a></p>
+<?php endif; ?>
+
+<?php if ($successMessage !== ''): ?>
+    <script>
+        alert("<?= htmlspecialchars(addslashes($successMessage), ENT_QUOTES, 'UTF-8') ?>");
+    </script>
+<?php endif; ?>
+
+<?php if ($errorMessage !== ''): ?>
+    <script>
+        alert("<?= htmlspecialchars(addslashes($errorMessage), ENT_QUOTES, 'UTF-8') ?>");
+    </script>
 <?php endif; ?>
 
 <h3>My reservations</h3>
@@ -83,7 +105,11 @@ echoMenu();
                 <td><?= htmlspecialchars($booking['status']) ?></td>
                 <td><?= htmlspecialchars($booking['payment_status'] ?? 'Pending') ?></td>
                 <td>
-                    <?php if (($booking['status'] ?? 'Pending') === 'Pending'): ?>
+                    <?php if (($booking['trip_status'] ?? '') === 'Completed' && (int) $booking['has_reviewed'] === 0): ?>
+                        <a href="add_review.php?trip_id=<?= (int) $booking['trip_id'] ?>">Leave a review</a>
+                    <?php elseif (($booking['trip_status'] ?? '') === 'Completed'): ?>
+                        Reviewed
+                    <?php elseif (($booking['status'] ?? 'Pending') === 'Pending'): ?>
                         <a href="pay_booking.php?booking_id=<?= (int) $booking['id'] ?>">Pay</a>
                     <?php else: ?>
                         -

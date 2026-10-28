@@ -37,7 +37,21 @@ SELECT driver_id, AVG(rating) AS moyenne_note
 FROM reviews
 GROUP BY driver_id;
 
--- 7. Total des montants de paiements sur une période.
+-- 7. Vérifier si un passager a déjà noté un trajet donné.
+SELECT *
+FROM reviews
+WHERE trip_id = 1
+  AND passenger_id = 2;
+
+-- 8. Voir les avis reçus par un conducteur.
+SELECT r.rating, r.comment, u.firstname, u.name, t.departure_city, t.destination_city
+FROM reviews r
+JOIN users u ON u.id = r.passenger_id
+JOIN trips t ON t.id = r.trip_id
+WHERE r.driver_id = 1;
+
+-- 9. Total des montants de paiements sur une période.
 SELECT SUM(amount) AS total_payments
 FROM payments
 WHERE payment_date BETWEEN '2026-10-01' AND '2026-10-31';
+

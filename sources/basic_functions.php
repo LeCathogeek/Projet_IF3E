@@ -9,6 +9,7 @@ function echoMenu(): void {
     echo '<li><a href="add_vehicle.php">Add a car</a></li>';
     echo '<li><a href="create_trip.php">Publish a trip</a></li>';
     echo '<li><a href="my_trips.php">My trips</a></li>';
+    echo '<li><a href="driver_reviews.php">My reviews</a></li>';
 
     if ((int) $isAdmin === 1) {
         echo '<li><a href="admin_stats.php">Admin stats</a></li>';

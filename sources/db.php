@@ -105,6 +105,8 @@ SQL;
 
     $pdo->exec($sql);
 
+    $pdo->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_trip_passenger ON reviews (trip_id, passenger_id);');
+
     if (!columnExists($pdo, 'users', 'is_admin')) {
         $pdo->exec('ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0');
     }

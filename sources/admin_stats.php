@@ -26,6 +26,14 @@ $stmt = $db->prepare('SELECT COUNT(*) AS total_bookings FROM bookings');
 $stmt->execute();
 $totalBookings = (int) $stmt->fetchColumn();
 
+$stmt = $db->prepare('SELECT COUNT(*) AS total_reviews FROM reviews');
+$stmt->execute();
+$totalReviews = (int) $stmt->fetchColumn();
+
+$stmt = $db->prepare('SELECT AVG(rating) AS average_rating FROM reviews');
+$stmt->execute();
+$averageRating = (float) ($stmt->fetchColumn() ?? 0);
+
 $stmt = $db->prepare('SELECT SUM(total_price) AS total_amount FROM bookings WHERE status = "Confirmed"');
 $stmt->execute();
 $totalAmount = (float) ($stmt->fetchColumn() ?? 0);
@@ -58,6 +66,8 @@ $pendingPayments = (int) $stmt->fetchColumn();
         <li>Active users: <?= (int) $totalUsers ?></li>
         <li>Total trips: <?= (int) $totalTrips ?></li>
         <li>Total bookings: <?= (int) $totalBookings ?></li>
+        <li>Total reviews: <?= (int) $totalReviews ?></li>
+        <li>Average review score: <?= number_format($averageRating, 2, ',', ' ') ?> / 5</li>
         <li>Open trips: <?= (int) $openTrips ?></li>
         <li>Pending payments: <?= (int) $pendingPayments ?></li>
         <li>Total confirmed revenue: <?= number_format($totalAmount, 2, ',', ' ') ?> €</li>
