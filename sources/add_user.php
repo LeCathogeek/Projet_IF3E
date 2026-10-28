@@ -64,7 +64,7 @@ try {
         ':phonenumber' => $phonenumber,
         ':birthdate' => $birthdate,
         ':accountcreationdate' => date('Y-m-d'),
-        ':accountstatus' => 0,
+        ':accountstatus' => 1,
         ':profilepicture' => $profilepicture,
     ]);
 

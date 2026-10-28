@@ -4,9 +4,9 @@
 
 INSERT INTO users (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture)
 VALUES
-    ('Admin', 'Sophie', 'admin@example.com', '$2y$10$demoHashAdminReplaceMe', '0123456789', '1990-02-14', '2026-09-01', 1, ''),
-    ('Dupont', 'Paul', 'paul@example.com', '$2y$10$demoHashUserReplaceMe', '0612345678', '1995-05-19', '2026-09-05', 0, ''),
-    ('Martin', 'Claire', 'claire@example.com', '$2y$10$demoHashUser2ReplaceMe', '0678901234', '1992-11-03', '2026-09-12', 0, '');
+    ('Pacault', 'Etienne', 'etienne.pacault@protonmail.com', '$2y$10$Bq27GswrhA26ymS.UOlTfuJ2Bm4go4aQONWm5o01fMCfR3MjAdxeW', '0634667396', '2008-09-29', '2026-09-17', 1, ''),
+    ('Dupont', 'Paul', 'paul.dupont@example.com', '$2y$10$c19ryAkYZb.ptm5Stf9z1.3mlX9GtBDA31cgdx3vCv2g53vX1XMxu', '0612345678', '2026-10-15', '2026-10-28', 1, ''),
+    ('Dubois', 'Jeanne', 'jeanne.dubois@example.com', '$2y$10$XY9M6trduRYpuS1TK3/Kd.BGsTsFvF9kKtK4/OCrhlmjpGAQedFPm', '0678901234', '2026-10-06', '2026-10-28', 1, '');
 
 INSERT INTO vehicles (owner_id, brand, model, registration_number, seat_count, color, year)
 VALUES
