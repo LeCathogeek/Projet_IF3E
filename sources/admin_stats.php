@@ -14,7 +14,7 @@ if ((int) ($_SESSION['account_status'] ?? 0) !== 1) {
     exit;
 }
 
-$stmt = $db->prepare('SELECT COUNT(*) AS total_users FROM users WHERE account_status = 1');
+$stmt = $db->prepare('SELECT COUNT(*) AS total_users FROM users');
 $stmt->execute();
 $totalUsers = (int) $stmt->fetchColumn();
 
@@ -57,7 +57,6 @@ $pendingPayments = (int) $stmt->fetchColumn();
     <h1>Admin stats</h1>
 
     <?php
-    require __DIR__ . '/basic_functions.php';
     echoMenu();
     ?>
 

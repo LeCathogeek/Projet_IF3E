@@ -56,7 +56,6 @@ $users = $stmt->fetchAll();
     <h1>Admin users</h1>
 
     <?php
-    require __DIR__ . '/basic_functions.php';
     echoMenu();
     ?>
 
