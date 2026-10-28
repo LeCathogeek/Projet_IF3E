@@ -65,7 +65,7 @@ echoMenu();
                     <td><?= htmlspecialchars($trip['departure_date']) ?></td>
                     <td><?= htmlspecialchars($trip['departure_time']) ?></td>
                     <td><?= htmlspecialchars($trip['brand']) ?> <?= htmlspecialchars($trip['model']) ?></td>
-                    <td><?= (int) $trip['total_places_reservees'] ?></td>
+                    <td><?= (int) $trip['seats_available'] ?></td>
                     <td><?= number_format((float) $trip['price_per_seat'], 2, ',', ' ') ?> €</td>
                     <td><?= htmlspecialchars($trip['trip_status']) ?></td>
                     <td><?= (int) $trip['total_places_reservees'] ?></td>
