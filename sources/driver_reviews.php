@@ -43,9 +43,9 @@ $ratingSummary = $stmt->fetch();
 </head>
 <body>
     <h1>My reviews</h1>
-
-    <?php require __DIR__ . '/basic_functions.php'; echoMenu(); ?>
-
+    <?php
+    echoMenu();
+    ?>
     <?php if ($successMessage !== ''): ?>
         <script>
             alert("<?= htmlspecialchars(addslashes($successMessage), ENT_QUOTES, 'UTF-8') ?>");
