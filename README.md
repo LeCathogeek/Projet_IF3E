@@ -59,3 +59,23 @@ You can access to those accounts with those email and passwords :
 - Email : etienne.pacault@protonmail.com | Password : 12345678 
 - Email : paul.dupont@example.com | Password : 12345678
 - Email : jeanne.dubois@example.com | Password : 12345678
+
+# Implemented features
+
+Currently, the website can handle an appropriate register/login system. Users may create there account with a form in the register page and can login.
+The passwords are hashed in order to enforce security.
+
+The main dashboard offers some options to the connected user.
+- The user could search trips that correspond to his needs (appropriate departure and destination city, appropriate date for instance)
+- If the user is willing to drive and to invite other users, he can register his car and its information and publish a new trip.
+- The users who searched an appropriate trip could also book the trips they want and pay for them (fake bank application)
+- The drivers can cancel their trips or mark them as completed allowing the users to send a review.
+- The passengers can send a review and a rating to the driver.
+- Finally, the user, if he has admins privileges, could also grant the admin status to other accounts and see the website statistics.
+
+# Main weaknesses and limitations
+
+The main weakness of the website is the lack of power in deleting or editing information.
+The only way to edit or delete a user or a vehicle for instance is to access directly to the database using an appropriate software, since there are no way to do that in the website properly.
+
+On top of that, admins do have really limited power in terms of managing users, they can only see statistics of the website and change the admin status of the accounts.
