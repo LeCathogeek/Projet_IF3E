@@ -2,11 +2,11 @@
 -- Les mots de passe doivent être remplacés par des valeurs hachées réelles avec password_hash().
 -- Exemple : $2y$10$... (généré en PHP).
 
-INSERT INTO users (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture)
+INSERT INTO users (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture, is_admin)
 VALUES
-    ('Pacault', 'Etienne', 'etienne.pacault@protonmail.com', '$2y$10$Bq27GswrhA26ymS.UOlTfuJ2Bm4go4aQONWm5o01fMCfR3MjAdxeW', '0634667396', '2008-09-29', '2026-09-17', 1, ''),
-    ('Dupont', 'Paul', 'paul.dupont@example.com', '$2y$10$c19ryAkYZb.ptm5Stf9z1.3mlX9GtBDA31cgdx3vCv2g53vX1XMxu', '0612345678', '2026-10-15', '2026-10-28', 1, ''),
-    ('Dubois', 'Jeanne', 'jeanne.dubois@example.com', '$2y$10$XY9M6trduRYpuS1TK3/Kd.BGsTsFvF9kKtK4/OCrhlmjpGAQedFPm', '0678901234', '2026-10-06', '2026-10-28', 1, '');
+    ('Pacault', 'Etienne', 'etienne.pacault@protonmail.com', '$2y$10$Bq27GswrhA26ymS.UOlTfuJ2Bm4go4aQONWm5o01fMCfR3MjAdxeW', '0634667396', '2008-09-29', '2026-09-17', 1, '', 1),
+    ('Dupont', 'Paul', 'paul.dupont@example.com', '$2y$10$c19ryAkYZb.ptm5Stf9z1.3mlX9GtBDA31cgdx3vCv2g53vX1XMxu', '0612345678', '2026-10-15', '2026-10-28', 1, '', 0),
+    ('Dubois', 'Jeanne', 'jeanne.dubois@example.com', '$2y$10$XY9M6trduRYpuS1TK3/Kd.BGsTsFvF9kKtK4/OCrhlmjpGAQedFPm', '0678901234', '2026-10-06', '2026-10-28', 1, '', 0);
 
 INSERT INTO vehicles (owner_id, brand, model, registration_number, seat_count, color, year)
 VALUES

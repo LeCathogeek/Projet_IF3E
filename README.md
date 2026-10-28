@@ -46,3 +46,16 @@ Finally, you just need to open your favorite web browser and go to :
 or change 8000 by the port you've set in the command you've used in order to launch the php server.
 <br />
 <br />
+
+# Example accounts
+
+When you start the project for the first time, there are three accounts that are already registered in the website :
+
+- Étienne Pacault (me, the admin)
+- Paul Dupont (a simple user)
+- Jeanne Dubois (another simple user)
+
+You can access to those accounts with those email and passwords :
+- Email : etienne.pacault@protonmail.com | Password : 12345678 
+- Email : paul.dupont@example.com | Password : 12345678
+- Email : jeanne.dubois@example.com | Password : 12345678
