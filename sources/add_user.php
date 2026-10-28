@@ -23,29 +23,29 @@ try {
     }
 
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        throw new Exception('Adresse e-mail invalide.');
+        throw new Exception('Invalid email adress.');
     }
 
     if (strlen($password) < 8) {
-        throw new Exception('Le mot de passe doit faire au moins 8 caractères.');
+        throw new Exception('The password must at least contain 8 characters.');
     }
 
     if ($phonenumber !== '' && !preg_match('/^[0-9 +()\-]{6,20}$/', $phonenumber)) {
-        throw new Exception('Le numéro de téléphone est invalide.');
+        throw new Exception('Invalid phone number.');
     }
 
     if ($profilepicture !== '' && !filter_var($profilepicture, FILTER_VALIDATE_URL)) {
-        throw new Exception('L\'URL de l\'avatar est invalide.');
+        throw new Exception('Invalid avatar URL.');
     }
 
     if ($birthdate !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthdate)) {
-        throw new Exception('Date de naissance invalide.');
+        throw new Exception('Invalid birthdate.');
     }
 
     $check = $pdo->prepare('SELECT COUNT(1) FROM users WHERE email = :email');
     $check->execute([':email' => $email]);
     if ((int) $check->fetchColumn() > 0) {
-        throw new Exception('Un compte avec cette adresse e-mail existe déjà.');
+        throw new Exception('An account with this email already exists');
     }
 
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -72,10 +72,10 @@ try {
     exit;
 } catch (PDOException $e) {
     http_response_code(500);
-    echo 'Erreur base de données : ' . htmlspecialchars($e->getMessage());
+    echo 'Error database: ' . htmlspecialchars($e->getMessage());
     exit;
 } catch (Exception $e) {
     http_response_code(400);
-    echo 'Erreur : ' . htmlspecialchars($e->getMessage());
+    echo 'Error : ' . htmlspecialchars($e->getMessage());
     exit;
 }

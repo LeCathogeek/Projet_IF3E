@@ -18,7 +18,6 @@ function echoMenu(): void {
     echo '</ul>';
     echo '</div>';
 }
-
 function getDb(): PDO {
     $dbDir = __DIR__ . '/databases';
     $dbFile = $dbDir . '/main_database.sq3';

@@ -21,14 +21,9 @@ if (!$user) {
     exit;
 }
 $stmt = $db->prepare('SELECT t.id, t.departure_city, t.destination_city, t.departure_date, t.departure_time,
-            t.status AS trip_status, v.brand, v.model,
-            COALESCE(SUM(b.seats_booked), 0) AS total_places_reservees
-    FROM trips t
-    JOIN vehicles v ON v.id = t.vehicle_id
-    LEFT JOIN bookings b ON b.trip_id = t.id
-    WHERE t.driver_id = :driver_id
-    GROUP BY t.id, t.departure_city, t.destination_city, t.departure_date, t.departure_time,
-             t.status, v.brand, v.model
+            t.status AS trip_status, v.brand, v.model, COALESCE(SUM(b.seats_booked), 0) AS total_places_reservees
+    FROM trips t JOIN vehicles v ON v.id = t.vehicle_id LEFT JOIN bookings b ON b.trip_id = t.id WHERE t.driver_id = :driver_id
+    GROUP BY t.id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.status, v.brand, v.model
     ORDER BY t.departure_date DESC, t.departure_time DESC');
 $stmt->execute([':driver_id' => $userId]);
 $trips = $stmt->fetchAll();

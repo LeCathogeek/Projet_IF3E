@@ -54,11 +54,9 @@ $users = $stmt->fetchAll();
 </head>
 <body>
     <h1>Admin users</h1>
-
     <?php
     echoMenu();
     ?>
-
     <table border="1" cellpadding="8">
         <tr>
             <th>ID</th>

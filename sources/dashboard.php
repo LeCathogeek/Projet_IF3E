@@ -24,16 +24,9 @@ unset($_SESSION['flash_error']);
 
 $stmt = $db->prepare('SELECT b.id, b.status, b.seats_booked, b.total_price,
         t.id AS trip_id, t.departure_city, t.destination_city, t.departure_date, t.departure_time, t.status AS trip_status,
-        p.payment_status,
-        EXISTS (
-            SELECT 1 FROM reviews r
-            WHERE r.trip_id = t.id AND r.passenger_id = :user_id
-        ) AS has_reviewed
-FROM bookings b
-JOIN trips t ON t.id = b.trip_id
-LEFT JOIN payments p ON p.booking_id = b.id
-WHERE b.passenger_id = :user_id
-ORDER BY b.id DESC');
+        p.payment_status, EXISTS (SELECT 1 FROM reviews r WHERE r.trip_id = t.id AND r.passenger_id = :user_id
+        ) AS has_reviewed FROM bookings b JOIN trips t ON t.id = b.trip_id LEFT JOIN payments p ON p.booking_id = b.id
+    WHERE b.passenger_id = :user_id ORDER BY b.id DESC');
 $stmt->execute([':user_id' => $userId]);
 $bookings = $stmt->fetchAll();
 ?>
