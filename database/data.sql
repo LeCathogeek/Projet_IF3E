@@ -1,22 +1,18 @@
--- Données de démonstration.
--- Les mots de passe doivent être remplacés par des valeurs hachées réelles avec password_hash().
--- Exemple : $2y$10$... (généré en PHP).
-
-INSERT INTO users (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture, is_admin)
+INSERT INTO users (name, firstname, email, password, phone_number, birthdate, account_creation_date, account_status, profile_picture)
 VALUES
-    ('Pacault', 'Etienne', 'etienne.pacault@protonmail.com', '$2y$10$Bq27GswrhA26ymS.UOlTfuJ2Bm4go4aQONWm5o01fMCfR3MjAdxeW', '0634667396', '2008-09-29', '2026-09-17', 1, '', 1),
-    ('Dupont', 'Paul', 'paul.dupont@example.com', '$2y$10$c19ryAkYZb.ptm5Stf9z1.3mlX9GtBDA31cgdx3vCv2g53vX1XMxu', '0612345678', '2026-10-15', '2026-10-28', 1, '', 0),
-    ('Dubois', 'Jeanne', 'jeanne.dubois@example.com', '$2y$10$XY9M6trduRYpuS1TK3/Kd.BGsTsFvF9kKtK4/OCrhlmjpGAQedFPm', '0678901234', '2026-10-06', '2026-10-28', 1, '', 0);
+    ('Pacault', 'Etienne', 'etienne.pacault@protonmail.com', '$2y$10$Bq27GswrhA26ymS.UOlTfuJ2Bm4go4aQONWm5o01fMCfR3MjAdxeW', '0634667396', '2008-09-29', '2026-09-17', 1, ''),
+    ('Dupont', 'Paul', 'paul.dupont@example.com', '$2y$10$c19ryAkYZb.ptm5Stf9z1.3mlX9GtBDA31cgdx3vCv2g53vX1XMxu', '0612345678', '2026-10-15', '2026-10-28', 1, ''),
+    ('Dubois', 'Jeanne', 'jeanne.dubois@example.com', '$2y$10$XY9M6trduRYpuS1TK3/Kd.BGsTsFvF9kKtK4/OCrhlmjpGAQedFPm', '0678901234', '2026-10-06', '2026-10-28', 1, '');
 
 INSERT INTO vehicles (owner_id, brand, model, registration_number, seat_count, color, year)
 VALUES
-    (1, 'Peugeot', '308', 'AA-123-AA', 5, 'Noir', 2021),
+    (1, 'Peugeot', '208', 'GB-111-GV', 5, 'Grise', 2022),
     (2, 'Renault', 'Clio', 'BB-456-BB', 4, 'Bleu', 2019),
     (3, 'Citroën', 'C3', 'CC-789-CC', 5, 'Blanc', 2020);
 
 INSERT INTO trips (driver_id, vehicle_id, departure_city, destination_city, departure_date, departure_time, seats_available, price_per_seat, status)
 VALUES
-    (1, 1, 'Montbéliard', 'Strasbourg', '2026-11-12', '08:00', 3, 15.00, 'Open'),
+    (1, 1, 'Sevenans', 'Pontarlier', '2026-10-28', '08:00', 3, 15.00, 'Open'),
     (2, 2, 'Besançon', 'Mulhouse', '2026-11-13', '09:30', 2, 12.50, 'Open'),
     (3, 3, 'Belfort', 'Colmar', '2026-11-15', '07:45', 4, 14.00, 'Open');
 
@@ -34,5 +30,5 @@ VALUES
 
 INSERT INTO reviews (trip_id, passenger_id, driver_id, rating, comment)
 VALUES
-    (3, 1, 3, 5, 'Très bon conducteur, trajet agréable et ponctuel.'),
-    (1, 2, 1, 4, 'Bonne route, voiture propre.');
+    (3, 1, 3, 5, 'Excellent trajet ! Nous avons bien discuté et le conducteur était très agréable.'),
+    (1, 2, 1, 1, 'Le trajet était abominable, n allez pas chez ce fou.');

@@ -1,6 +1,3 @@
--- Schéma principal de la base de données du projet de carpooling.
--- Ce fichier est une référence SQL propre.
-
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -84,9 +81,3 @@ CREATE INDEX IF NOT EXISTS idx_trips_departure ON trips(departure_city, departur
 CREATE INDEX IF NOT EXISTS idx_trips_destination ON trips(destination_city, departure_date);
 CREATE INDEX IF NOT EXISTS idx_bookings_trip ON bookings(trip_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_driver ON reviews(driver_id, rating);
-
--- Exemple d'utilisations validées :
--- 1. Trouver tous les trajets ouverts depuis Montbéliard vers Strasbourg.
--- 2. Lister les réservations d'un utilisateur donné.
--- 3. Calculer la note moyenne d'un conducteur.
-
