@@ -17,33 +17,42 @@ You may use php on linux simply with the tools provided by XAMPP.
 XAMPP is available at <a href="https://www.apachefriends.org/fr/index.html">https://www.apachefriends.org/fr/index.html</a>.
 <br />
 <br />
-Once you've installed the software, the PHP software should be available at <code>/opt/lampp/bin/php</code>.
+Once you've installed the software, the PHP executable should be available at
+<br />
+ <code>/opt/lampp/bin/php</code>.
+<br />
 <br />
 Just simply go to a folder in the PATH, such as <code>/usr/bin</code>
 <br />
+<br />
 <code>cd /usr/bin</code>
 <br />
+<br />
 <br/>
-Then, simply create a symbolic link pointing to the real executable.
-<br/>
+Then, you simply have to create a symbolic link pointing to the real executable.
+<br />
+<br />
 <code>sudo ln -s /opt/lampp/bin/php</code>
+<br />
 <br />
 <br />
 Once this is done, you can go to the sources directory of the project.
 <br />
+<br />
 <code>cd PLACE_WHERE_THE_PROJECT_IS/sources</code>
+<br />
 <br />
 <br />
 Then, you simply need to launch the server there.
 <br />
 <code>php -S localhost:8000</code>
 <br />
+<br />
+<br />
 You can change the 8000 if you prefer to launch the server on another port.
 <br />
 <br />
-Finally, you just need to open your favorite web browser and go to :
-<br />
-<a href="http://localhost:8000">http://localhost:8000</a>
+Finally, you just need to open your favorite web browser and go to : <a href="http://localhost:8000">http://localhost:8000</a>
 <br />
 or change 8000 by the port you've set in the command you've used in order to launch the php server.
 <br />
