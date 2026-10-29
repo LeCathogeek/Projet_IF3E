@@ -35,7 +35,7 @@ $stmt->execute([':driver_id' => $userId]);
 $ratingSummary = $stmt->fetch();
 ?>
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Carpooling project IF3E</title>
