@@ -87,7 +87,7 @@ if ($existing->fetch()) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Leave a review</title>
+    <title>Carpooling project IF3E</title>
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>

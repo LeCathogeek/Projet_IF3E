@@ -32,7 +32,7 @@ $trips = $stmt->fetchAll();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>My trips</title>
+    <title>Carpooling project IF3E</title>
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>

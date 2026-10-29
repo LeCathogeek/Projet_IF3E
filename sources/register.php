@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Projet Databases IF3E — Inscription</title>
+  <title>Carpooling project IF3E</title>
   <link rel="stylesheet" href="stylesheets/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
   <style type="text/css">

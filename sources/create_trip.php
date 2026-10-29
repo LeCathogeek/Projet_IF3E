@@ -77,7 +77,7 @@ $vehicleList = $vehicles->fetchAll();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Publier un trajet</title>
+    <title>Carpooling project IF3E</title>
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>

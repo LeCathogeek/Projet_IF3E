@@ -9,7 +9,7 @@ unset($_SESSION['flash_error']);
 ?>
 <html>
 <head>
-<title>Project Databases IF3E</title>
+<title>Carpooling project IF3E</title>
 <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>

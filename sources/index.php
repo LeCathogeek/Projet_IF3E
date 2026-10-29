@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Projet Databases IF3E</title>
+<title>Carpooling project IF3E</title>
 <link rel="stylesheet" href="stylesheets/style.css">
 <style type="text/css">
 body {
